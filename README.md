@@ -2,48 +2,35 @@
 ### Học phần: Cấu trúc dữ liệu và Giải thuật - Trường ĐH Giao thông Vận tải TP.HCM (UTH)
 - **Giảng viên hướng dẫn:** ThS. Bùi Văn Thượng
 - **Lớp học phần:** 012012400212 | **Nhóm:** 4
-- **Trưởng nhóm:** Nguyễn Bá Linh (MSSV: 044207007737)
+- **Trưởng nhóm:** Nguyễn Bá Linh
 
 ---
 
-## 📂 Cấu trúc thư mục mã nguồn
+## 👥 PHÂN CHIA FILE CODE CHO TỪNG THÀNH VIÊN
 
-```
-DeTai8_QuanLyThiSinh/
-├── src/
-│   ├── ThiSinh.h            # Cấu trúc Thí sinh, tách tên, ký tự đầu
-│   ├── LinkedList.h         # Danh sách liên kết đơn (Node & LinkedList)
-│   ├── HashTable.h          # Bảng băm dạng bảng tra 26 bucket (A-Z)
-│   ├── Sorting.h            # Thuật toán Merge Sort O(N log N) theo tên
-│   ├── RoomAllocation.h     # Thuật toán Greedy phân phòng thi tối ưu xác suất
-│   ├── FileManager.h        # Đọc/ghi dữ liệu file TXT
-│   └── Menu.h               # Giao diện menu console điều hướng
-├── candidates.txt           # File dữ liệu mẫu 30 thí sinh
-├── main.cpp                 # Điểm khởi chạy chương trình (hỗ trợ console UTF-8)
-└── README.md
-```
+Dự án được tách riêng thành từng file ứng với từng người phụ trách để mỗi bạn vào tự code và nắm chắc phần của mình:
+
+| File mã nguồn | Thành viên phụ trách | Nhiệm vụ chính |
+|:---|:---|:---|
+| `CauTrucChung.h` | **Nguyễn Bá Linh** (Trưởng nhóm) | Cấu trúc dữ liệu dùng chung (`ThiSinh`, `Node`, `List`, `bangBam[26]`, hàm băm) |
+| `ThemThiSinh_TheAnh.h` | **Hoàng Thế Anh** | Hàm thêm thí sinh vào bảng băm và nhập liệu từ bàn phím |
+| `TraCuuXoa_NhatAnh.h` | **Trần Nhật Anh** | Hàm tra cứu theo mã, tra cứu theo tên và xóa thí sinh |
+| `SapXep_HuuCuong.h` | **Nguyễn Hữu Cường** | Hàm sắp xếp danh sách theo tên tăng dần và in bảng |
+| `PhanPhong_KhanhHung.h` | **Phạm Khánh Hưng** | Hàm phân danh sách vào $n$ phòng thi giảm thiểu trùng chữ cái đầu |
+| `DocGhiFile_QuangThang.h` | **Đào Quang Thắng** | Hàm lưu và đọc dữ liệu từ file văn bản `candidates.txt` |
+| `main.cpp` | **Nguyễn Bá Linh** | File chạy chính: `#include` các file trên và tạo menu điều khiển |
 
 ---
 
-## 🛠️ Hướng dẫn biên dịch và chạy
+## 🛠️ HƯỚNG DẪN BIÊN DỊCH VÀ CHẠY
 
-### Cách 1: Biên dịch bằng g++ (chuẩn C++20)
+### Cách 1: Dùng lệnh g++ (C++20)
 ```powershell
 g++ -std=c++20 -O2 main.cpp -o quanly_thisinh.exe
 .\quanly_thisinh.exe
 ```
 
-### Cách 2: Chạy trực tiếp trong VS Code
+### Cách 2: Chạy trong VS Code
 1. Mở thư mục `DeTai8_QuanLyThiSinh` trong VS Code.
 2. Mở file `main.cpp`.
 3. Bấm nút **▶ Run Code** ở góc trên bên phải (hoặc phím tắt `Ctrl + Alt + F5`).
-
----
-
-## 📌 Các chức năng chính
-1. **Thêm thí sinh:** Kiểm tra trùng mã dự thi, chuẩn hóa ngày sinh.
-2. **Tra cứu thí sinh:** Tra cứu theo mã dự thi và tra cứu theo tên qua bảng tra $O(L)$.
-3. **Hiển thị danh sách:** Sắp xếp tăng dần theo tên bằng Merge Sort $O(N \log N)$.
-4. **Phân danh sách vào $n$ phòng thi:** Thuật toán Greedy cân bằng rải đều các thí sinh cùng chữ cái đầu vào các phòng khác nhau để giảm thiểu xác suất trùng tên.
-5. **Cập nhật & Xóa:** Quản lý sửa đổi thông tin hoặc xóa thí sinh khỏi danh sách liên kết.
-6. **Lưu/Đọc file:** Lưu và khôi phục dữ liệu từ file `candidates.txt`.
