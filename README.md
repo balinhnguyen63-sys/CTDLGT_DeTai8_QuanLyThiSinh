@@ -2,35 +2,30 @@
 ### Học phần: Cấu trúc dữ liệu và Giải thuật - Trường ĐH Giao thông Vận tải TP.HCM (UTH)
 - **Giảng viên hướng dẫn:** ThS. Bùi Văn Thượng
 - **Lớp học phần:** 012012400212 | **Nhóm:** 4
-- **Trưởng nhóm:** Nguyễn Bá Linh
+- **Trưởng nhóm:** Nguyễn Bá Linh (MSSV: 044207007737)
 
 ---
 
-## 👥 PHÂN CHIA FILE CODE CHO TỪNG THÀNH VIÊN
+## 📂 CẤU TRÚC DỰ ÁN (DUY NHẤT 1 FILE MÃ NGUỒN)
 
-Dự án được tách riêng thành từng file ứng với từng người phụ trách để mỗi bạn vào tự code và nắm chắc phần của mình:
+Toàn bộ bài tập nhóm được viết tập trung trong **duy nhất 1 file**: `main.cpp`:
 
-| File mã nguồn | Thành viên phụ trách | Nhiệm vụ chính |
-|:---|:---|:---|
-| `CauTrucChung.h` | **Nguyễn Bá Linh** (Trưởng nhóm) | Cấu trúc dữ liệu dùng chung (`ThiSinh`, `Node`, `List`, `bangBam[26]`, hàm băm) |
-| `ThemThiSinh_TheAnh.h` | **Hoàng Thế Anh** | Hàm thêm thí sinh vào bảng băm và nhập liệu từ bàn phím |
-| `TraCuuXoa_NhatAnh.h` | **Trần Nhật Anh** | Hàm tra cứu theo mã, tra cứu theo tên và xóa thí sinh |
-| `SapXep_HuuCuong.h` | **Nguyễn Hữu Cường** | Hàm sắp xếp danh sách theo tên tăng dần và in bảng |
-| `PhanPhong_KhanhHung.h` | **Phạm Khánh Hưng** | Hàm phân danh sách vào $n$ phòng thi giảm thiểu trùng chữ cái đầu |
-| `DocGhiFile_QuangThang.h` | **Đào Quang Thắng** | Hàm lưu và đọc dữ liệu từ file văn bản `candidates.txt` |
-| `main.cpp` | **Nguyễn Bá Linh** | File chạy chính: `#include` các file trên và tạo menu điều khiển |
+| Phần việc trong `main.cpp` | Thành viên phụ trách | Trạng thái |
+|:---|:---|:---:|
+| **Phần 1: Cấu trúc chung & Bảng băm** | **Nguyễn Bá Linh** (Trưởng nhóm) | ✅ Đã hoàn thành |
+| **Phần 2: Thêm thí sinh** | **Hoàng Thế Anh** | ⏳ Thế Anh tự code con trỏ & biến |
+| **Phần 3: Tra cứu & Xóa** | **Trần Nhật Anh** | ⏳ Nhật Anh tự code con trỏ & biến |
+| **Phần 4: Sắp xếp theo tên A-Z** | **Nguyễn Hữu Cường** | ⏳ Hữu Cường tự code thuật toán |
+| **Phần 5: Phân chia n phòng thi** | **Phạm Khánh Hưng** | ⏳ Khánh Hưng tự code giải thuật |
+| **Phần 6: Đọc & Ghi file TXT** | **Đào Quang Thắng** | ⏳ Quang Thắng tự code đọc/ghi file |
+| **Phần 7: Hàm main & Menu** | **Nguyễn Bá Linh** (Trưởng nhóm) | ✅ Đã hoàn thành |
 
 ---
 
 ## 🛠️ HƯỚNG DẪN BIÊN DỊCH VÀ CHẠY
 
-### Cách 1: Dùng lệnh g++ (C++20)
 ```powershell
 g++ -std=c++20 -O2 main.cpp -o quanly_thisinh.exe
 .\quanly_thisinh.exe
 ```
-
-### Cách 2: Chạy trong VS Code
-1. Mở thư mục `DeTai8_QuanLyThiSinh` trong VS Code.
-2. Mở file `main.cpp`.
-3. Bấm nút **▶ Run Code** ở góc trên bên phải (hoặc phím tắt `Ctrl + Alt + F5`).
+Hoặc mở thư mục trong **VS Code** và bấm **▶ Run Code** (`Ctrl + Alt + F5`).
