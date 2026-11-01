@@ -1,0 +1,11 @@
+# Binaries and build artifacts
+*.exe
+*.o
+*.obj
+*.dll
+.build/
+.vscode/
+
+# Temporary files
+*.tmp
+update_report.py
