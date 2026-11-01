@@ -5,13 +5,15 @@
 
 // ============================================================================
 // DỰ ÁN CTDL&GT: ĐỀ TÀI SỐ 8 - QUẢN LÝ DANH SÁCH THÍ SINH
-// PHỤ TRÁCH: ĐÀO QUANG THẮNG
-// NHIỆM VỤ: Đọc và ghi file dữ liệu thí sinh (file input.txt và file xuat)
+// GIẢNG VIÊN HƯỚNG DẪN: ThS. BÙI VĂN THƯỢNG - LỚP: 012012400212 - NHÓM 4
+// PHỤ TRÁCH THỰC HIỆN: ĐÀO QUANG THẮNG
+// NHIỆM VỤ: Đọc dữ liệu từ file input.txt và ghi danh sách thí sinh ra file TXT
+// KIẾN TRÚC ÁP DỤNG: Xử lý tệp tin (File I/O) & Đồng bộ cấu trúc List + HashTable
 // ============================================================================
 
 bool Utils::loadFromFile(const std::string &filename, LinkedList &list, HashTable &table) {
     // ------------------------------------------------------------------------
-    // KHAI BÁO CÁC BIẾN CẦN THIẾT (ĐÃ THIẾT KẾ SẴN CHO THẮNG)
+    // KHAI BÁO CÁC BIẾN VÀ LUỒNG TỆP CẦN THIẾT (ĐÃ THIẾT KẾ SẴN CHO THẮNG):
     // ------------------------------------------------------------------------
     std::ifstream inFile(filename);
     std::string line;
@@ -23,19 +25,19 @@ bool Utils::loadFromFile(const std::string &filename, LinkedList &list, HashTabl
     // ------------------------------------------------------------------------
     // BƯỚC 1: Kiểm tra xem file có mở thành công không:
     //         if (!inFile.is_open()) {
-    //             std::cout << "[!] Khong the mo file: " << filename << "\n";
+    //             std::cout << "[!] Khong the mo file du lieu: " << filename << "\n";
     //             return false;
     //         }
     //
-    // BƯỚC 2: Bỏ qua dòng tiêu đề nếu có:
-    //         std::getline(inFile, line); // Bỏ qua "SBD,HoTen,GioiTinh,NgaySinh,QueQuan"
+    // BƯỚC 2: Bỏ qua dòng tiêu đề CSV:
+    //         std::getline(inFile, line); // Bỏ qua dòng "SBD,HoTen,GioiTinh,NgaySinh,QueQuan"
     //
     // BƯỚC 3: Dùng vòng lặp đọc từng dòng dữ liệu:
     //         while (std::getline(inFile, line)) {
-    //             if (line.empty()) continue;
+    //             if (line.empty()) continue; // Bỏ qua dòng trống
     //             std::stringstream ss(line);
     //             
-    //             // Tách các trường cách nhau bởi dấu phẩy ',':
+    //             // Tách 5 trường cách nhau bởi dấu phẩy ',':
     //             std::getline(ss, sbd, ',');
     //             std::getline(ss, hoTen, ',');
     //             std::getline(ss, gioiTinh, ',');
@@ -51,10 +53,16 @@ bool Utils::loadFromFile(const std::string &filename, LinkedList &list, HashTabl
     //             loadedCount++;
     //         }
     //
-    // BƯỚC 4: Đóng file và trả về kết quả:
+    // BƯỚC 4: Đóng luồng file và thông báo kết quả:
     //         inFile.close();
     //         std::cout << "[+] Da doc thanh cong " << loadedCount << " thi sinh tu file " << filename << "\n";
     //         return true;
+    // ------------------------------------------------------------------------
+    // GỢI Ý TRẢ LỜI VẤN ĐÁP CHO THẮNG (BƯỚC 8):
+    // - Câu hỏi: "Tại sao khi nạp dữ liệu từ file, em phải thêm vào cả 2 cấu trúc?"
+    // - Trả lời: "Dạ thưa Thầy, em thêm vào LinkedList để phục vụ việc duyệt toàn bộ danh sách
+    //   và sắp xếp; đồng thời thêm vào HashTable để phân nhóm theo 26 chữ cái phục vụ việc
+    //   tra cứu O(1) theo tên và phân bổ phòng thi tối ưu xác suất."
     // ------------------------------------------------------------------------
 
     // THÔNG BÁO TẠM THỜI KHI THÀNH VIÊN ĐANG VIẾT CODE:
@@ -67,7 +75,7 @@ bool Utils::loadFromFile(const std::string &filename, LinkedList &list, HashTabl
 
 bool Utils::saveToFile(const std::string &filename, const LinkedList &list) {
     // ------------------------------------------------------------------------
-    // KHAI BÁO CÁC BIẾN CẦN THIẾT (ĐÃ THIẾT KẾ SẴN CHO THẮNG)
+    // KHAI BÁO CÁC BIẾN VÀ CON TRỎ CẦN THIẾT (ĐÃ THIẾT KẾ SẴN CHO THẮNG):
     // ------------------------------------------------------------------------
     std::ofstream outFile(filename);
     Node* p = list.getHead();
@@ -77,11 +85,11 @@ bool Utils::saveToFile(const std::string &filename, const LinkedList &list) {
     // ------------------------------------------------------------------------
     // BƯỚC 1: Kiểm tra xem file có mở thành công để ghi không:
     //         if (!outFile.is_open()) {
-    //             std::cout << "[!] Khong the tao file: " << filename << "\n";
+    //             std::cout << "[!] Khong the tao hoac mo file de ghi: " << filename << "\n";
     //             return false;
     //         }
     //
-    // BƯỚC 2: Ghi dòng tiêu đề CSV:
+    // BƯỚC 2: Ghi dòng tiêu đề CSV chuẩn:
     //         outFile << "SBD,HoTen,GioiTinh,NgaySinh,QueQuan\n";
     //
     // BƯỚC 3: Dùng con trỏ p duyệt qua từng nút trong Danh sách liên kết:
@@ -94,9 +102,9 @@ bool Utils::saveToFile(const std::string &filename, const LinkedList &list) {
     //             p = p->next; // Chuyển sang nút kế tiếp
     //         }
     //
-    // BƯỚC 4: Đóng file và thông báo thành công:
+    // BƯỚC 4: Đóng luồng file và in thông báo:
     //         outFile.close();
-    //         std::cout << "[+] Da luu toan bo danh sach ra file " << filename << " thanh cong!\n";
+    //         std::cout << "[+] Da luu toan bo " << list.getCount() << " thi sinh ra file " << filename << " thanh cong!\n";
     //         return true;
     // ------------------------------------------------------------------------
 

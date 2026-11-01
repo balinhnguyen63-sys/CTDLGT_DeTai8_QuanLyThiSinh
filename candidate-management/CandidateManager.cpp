@@ -7,8 +7,8 @@
 
 // ============================================================================
 // DỰ ÁN CTDL&GT: ĐỀ TÀI SỐ 8 - QUẢN LÝ DANH SÁCH THÍ SINH
-// PHỤ TRÁCH: NGUYỄN BÁ LINH (Kiến trúc, Menu, Vòng lặp chính)
-// PHỐI HỢP: HOÀNG THẾ ANH & TRẦN NHẬT ANH
+// GIẢNG VIÊN HƯỚNG DẪN: ThS. BÙI VĂN THƯỢNG - LỚP: 012012400212 - NHÓM 4
+// KIẾN TRÚC & ĐIỀU PHỐI HỆ THỐNG: NGUYỄN BÁ LINH (TRƯỞNG NHÓM - MSSV: 044207007737)
 // ============================================================================
 
 CandidateManager::CandidateManager() {
@@ -46,12 +46,14 @@ void CandidateManager::initSampleData() {
 }
 
 // ============================================================================
-// PHẦN VIỆC CỦA HOÀNG THẾ ANH: THÊM MỚI VÀ CẬP NHẬT THÍ SINH
+// PHẦN VIỆC CỦA THÀNH VIÊN: HOÀNG THẾ ANH
+// NHIỆM VỤ: Thêm thí sinh mới (kiểm tra trùng SBD) & Cập nhật thông tin thí sinh
+// KIẾN TRÚC ÁP DỤNG: Chương 2 (Tìm kiếm tuyến tính) & Chương 4 (DSLK thêm cuối)
 // ============================================================================
 
 bool CandidateManager::addCandidate() {
     // ------------------------------------------------------------------------
-    // KHAI BÁO CÁC BIẾN CẦN THIẾT (ĐÃ THIẾT KẾ SẴN CHO THẾ ANH)
+    // KHAI BÁO CÁC BIẾN VÀ CON TRỎ CẦN THIẾT (ĐÃ THIẾT KẾ SẴN CHO THẾ ANH):
     // ------------------------------------------------------------------------
     std::string sbd, hoTen, gioiTinh, ngaySinh, queQuan;
     Node* pCheck = nullptr;
@@ -60,7 +62,9 @@ bool CandidateManager::addCandidate() {
     // HƯỚNG DẪN THỰC HIỆN TỪNG BƯỚC CHO HOÀNG THẾ ANH:
     // ------------------------------------------------------------------------
     // BƯỚC 1: Nhập Số Báo Danh (SBD) từ bàn phím:
-    //         std::cout << "Nhap Ma Du Thi / SBD: "; std::cin >> sbd;
+    //         std::cout << "\n--- THEM THI SINH MOI ---\n";
+    //         std::cout << "Nhap Ma Du Thi / SBD (vi du: TS099): ";
+    //         std::cin >> sbd;
     //
     // BƯỚC 2: Kiểm tra trùng mã SBD bằng con trỏ duyệt danh sách liên kết:
     //         pCheck = candidateList.find(sbd);
@@ -70,7 +74,7 @@ bool CandidateManager::addCandidate() {
     //         }
     //
     // BƯỚC 3: Nhập các thông tin còn lại của thí sinh:
-    //         std::cin.ignore();
+    //         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     //         std::cout << "Nhap Ho va Ten: "; std::getline(std::cin, hoTen);
     //         std::cout << "Nhap Gioi Tinh (Nam/Nu): "; std::getline(std::cin, gioiTinh);
     //         std::cout << "Nhap Ngay Sinh (dd/mm/yyyy): "; std::getline(std::cin, ngaySinh);
@@ -78,10 +82,12 @@ bool CandidateManager::addCandidate() {
     //
     // BƯỚC 4: Tạo đối tượng Candidate và chèn vào Danh sách liên kết + Bảng băm:
     //         Candidate newCandidate(sbd, hoTen, gioiTinh, ngaySinh, queQuan);
-    //         candidateList.insertTail(newCandidate);
-    //         hashTable.insert(newCandidate);
+    //         candidateList.insertTail(newCandidate); // O(1)
+    //         hashTable.insert(newCandidate);         // O(1)
     //
-    // BƯỚC 5: In thông báo thêm thành công và trả về true.
+    // BƯỚC 5: In thông báo thêm thành công và return true:
+    //         std::cout << "[+] Da them thi sinh " << hoTen << " (SBD: " << sbd << ") thanh cong!\n";
+    //         return true;
     // ------------------------------------------------------------------------
 
     // THÔNG BÁO TẠM THỜI:
@@ -93,7 +99,7 @@ bool CandidateManager::addCandidate() {
 
 bool CandidateManager::updateCandidate() {
     // ------------------------------------------------------------------------
-    // KHAI BÁO CÁC BIẾN CẦN THIẾT (ĐÃ THIẾT KẾ SẴN CHO THẾ ANH)
+    // KHAI BÁO CÁC BIẾN VÀ CON TRỎ CẦN THIẾT (ĐÃ THIẾT KẾ SẴN CHO THẾ ANH):
     // ------------------------------------------------------------------------
     std::string sbd;
     std::string newHoTen, newGioiTinh, newNgaySinh, newQueQuan;
@@ -102,8 +108,10 @@ bool CandidateManager::updateCandidate() {
     // ------------------------------------------------------------------------
     // HƯỚNG DẪN THỰC HIỆN TỪNG BƯỚC CHO HOÀNG THẾ ANH:
     // ------------------------------------------------------------------------
-    // BƯỚC 1: Nhập SBD cần sửa:
-    //         std::cout << "Nhap SBD thi sinh can cap nhat: "; std::cin >> sbd;
+    // BƯỚC 1: Nhập SBD của thí sinh cần cập nhật:
+    //         std::cout << "\n--- CAP NHAT THONG TIN THI SINH ---\n";
+    //         std::cout << "Nhap SBD thi sinh can cap nhat: ";
+    //         std::cin >> sbd;
     //
     // BƯỚC 2: Tìm kiếm thí sinh trong danh sách liên kết bằng con trỏ:
     //         pTarget = candidateList.find(sbd);
@@ -112,8 +120,18 @@ bool CandidateManager::updateCandidate() {
     //             return false;
     //         }
     //
-    // BƯỚC 3: Hiển thị thông tin cũ và nhập thông tin mới cần cập nhật.
-    //         Sau đó gán lại vào pTarget->data.setHoTen(...), v.v.
+    // BƯỚC 3: Hiển thị thông tin hiện tại của thí sinh:
+    //         std::cout << "Thong tin hien tai:\n";
+    //         pTarget->data.displayRow();
+    //
+    // BƯỚC 4: Nhập thông tin mới và cập nhật dữ liệu:
+    //         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    //         std::cout << "Nhap Ho Ten moi (de trong neu giu nguyen): ";
+    //         std::getline(std::cin, newHoTen);
+    //         if (!newHoTen.empty()) pTarget->data.setHoTen(newHoTen);
+    //         // Tuong tu voi gioiTinh, ngaySinh, queQuan...
+    //         std::cout << "[+] Cap nhat thong tin thanh cong!\n";
+    //         return true;
     // ------------------------------------------------------------------------
 
     // THÔNG BÁO TẠM THỜI:
@@ -124,12 +142,14 @@ bool CandidateManager::updateCandidate() {
 }
 
 // ============================================================================
-// PHẦN VIỆC CỦA TRẦN NHẬT ANH: TRA CỨU VÀ XÓA THÍ SINH
+// PHẦN VIỆC CỦA THÀNH VIÊN: TRẦN NHẬT ANH
+// NHIỆM VỤ: Tra cứu thí sinh (theo SBD & theo Tên qua Bảng băm) & Xóa thí sinh
+// KIẾN TRÚC ÁP DỤNG: Chương 2 (Tìm kiếm), Chương 4 (Xóa nút DSLK), Chương 6 (Bảng băm)
 // ============================================================================
 
 void CandidateManager::searchBySBD() {
     // ------------------------------------------------------------------------
-    // KHAI BÁO CÁC BIẾN CẦN THIẾT (ĐÃ THIẾT KẾ SẴN CHO NHẬT ANH)
+    // KHAI BÁO CÁC BIẾN VÀ CON TRỎ CẦN THIẾT (ĐÃ THIẾT KẾ SẴN CHO NHẬT ANH):
     // ------------------------------------------------------------------------
     std::string sbd;
     Node* result = nullptr;
@@ -137,8 +157,10 @@ void CandidateManager::searchBySBD() {
     // ------------------------------------------------------------------------
     // HƯỚNG DẪN THỰC HIỆN TỪNG BƯỚC CHO TRẦN NHẬT ANH:
     // ------------------------------------------------------------------------
-    // BƯỚC 1: Nhập SBD cần tìm:
-    //         std::cout << "Nhap So Bao Danh can tra cuu: "; std::cin >> sbd;
+    // BƯỚC 1: Nhập Số Báo Danh cần tra cứu:
+    //         std::cout << "\n--- TRA CUU THI SINH THEO SO BAO DANH ---\n";
+    //         std::cout << "Nhap So Bao Danh: ";
+    //         std::cin >> sbd;
     //
     // BƯỚC 2: Sử dụng con trỏ tìm kiếm qua Bảng băm hoặc Danh sách liên kết:
     //         result = hashTable.searchBySBD(sbd); // hoặc candidateList.find(sbd);
@@ -146,7 +168,11 @@ void CandidateManager::searchBySBD() {
     // BƯỚC 3: Kiểm tra nếu tìm thấy:
     //         if (result != nullptr) {
     //             std::cout << "\n[+] Tim thay thi sinh:\n";
+    //             std::cout << "+---------+-----------------------+---------+-------------+----------------------+\n";
+    //             std::cout << "| SBD     | Ho va Ten             | Phai    | Ngay Sinh   | Que Quan             |\n";
+    //             std::cout << "+---------+-----------------------+---------+-------------+----------------------+\n";
     //             result->data.displayRow();
+    //             std::cout << "+---------+-----------------------+---------+-------------+----------------------+\n";
     //         } else {
     //             std::cout << "[-] Khong tim thay thi sinh co SBD: " << sbd << "\n";
     //         }
@@ -159,7 +185,7 @@ void CandidateManager::searchBySBD() {
 
 void CandidateManager::searchByName() {
     // ------------------------------------------------------------------------
-    // KHAI BÁO CÁC BIẾN CẦN THIẾT (ĐÃ THIẾT KẾ SẴN CHO NHẬT ANH)
+    // KHAI BÁO CÁC BIẾN CẦN THIẾT (ĐÃ THIẾT KẾ SẴN CHO NHẬT ANH):
     // ------------------------------------------------------------------------
     std::string name;
 
@@ -167,10 +193,11 @@ void CandidateManager::searchByName() {
     // HƯỚNG DẪN THỰC HIỆN TỪNG BƯỚC CHO TRẦN NHẬT ANH:
     // ------------------------------------------------------------------------
     // BƯỚC 1: Nhập tên cần tra cứu:
-    //         std::cout << "Nhap Ten thi sinh can tra cuu (vi du: Linh, Anh, Cuong...): ";
+    //         std::cout << "\n--- TRA CUU THI SINH THEO TEN (BANG BAM) ---\n";
+    //         std::cout << "Nhap Ten thi sinh (vi du: Linh, Anh, Cuong...): ";
     //         std::cin >> name;
     //
-    // BƯỚC 2: Tận dụng Bảng băm dạng bảng tra để tìm kiếm cực nhanh:
+    // BƯỚC 2: Tận dụng Bảng băm dạng bảng tra để tìm kiếm cực nhanh O(1):
     //         hashTable.searchByName(name);
     // ------------------------------------------------------------------------
 
@@ -181,7 +208,7 @@ void CandidateManager::searchByName() {
 
 bool CandidateManager::deleteCandidate() {
     // ------------------------------------------------------------------------
-    // KHAI BÁO CÁC BIẾN CẦN THIẾT (ĐÃ THIẾT KẾ SẴN CHO NHẬT ANH)
+    // KHAI BÁO CÁC BIẾN VÀ CON TRỎ CẦN THIẾT (ĐÃ THIẾT KẾ SẴN CHO NHẬT ANH):
     // ------------------------------------------------------------------------
     std::string sbd;
     Node* pTarget = nullptr;
@@ -190,12 +217,14 @@ bool CandidateManager::deleteCandidate() {
     // HƯỚNG DẪN THỰC HIỆN TỪNG BƯỚC CHO TRẦN NHẬT ANH:
     // ------------------------------------------------------------------------
     // BƯỚC 1: Nhập SBD của thí sinh cần xóa:
-    //         std::cout << "Nhap SBD thi sinh can xoa: "; std::cin >> sbd;
+    //         std::cout << "\n--- XOA THI SINH KHOI HE THONG ---\n";
+    //         std::cout << "Nhap SBD thi sinh can xoa: ";
+    //         std::cin >> sbd;
     //
     // BƯỚC 2: Tìm nút cần xóa để lấy chữ cái đầu của tên (phục vụ xóa trên Bảng băm):
     //         pTarget = candidateList.find(sbd);
     //         if (pTarget == nullptr) {
-    //             std::cout << "[!] Khong tim thay thi sinh can xoa!\n";
+    //             std::cout << "[!] Khong tim thay thi sinh co SBD: " << sbd << "\n";
     //             return false;
     //         }
     //         char firstLetter = pTarget->data.getFirstLetterOfName();
@@ -203,7 +232,7 @@ bool CandidateManager::deleteCandidate() {
     // BƯỚC 3: Gọi hàm xóa trên cả Danh sách liên kết và Bảng băm:
     //         candidateList.remove(sbd);
     //         hashTable.remove(sbd, firstLetter);
-    //         std::cout << "[+] Da xoa thanh cong thi sinh khoi he thong!\n";
+    //         std::cout << "[+] Da xoa thanh cong thi sinh " << sbd << " khoi he thong!\n";
     //         return true;
     // ------------------------------------------------------------------------
 
@@ -215,7 +244,8 @@ bool CandidateManager::deleteCandidate() {
 }
 
 // ============================================================================
-// PHẦN VIỆC CỦA NGUYỄN BÁ LINH: GIAO DIỆN & ĐIỀU PHỐI HỆ THỐNG
+// PHẦN VIỆC CỦA TRƯỞNG NHÓM: NGUYỄN BÁ LINH
+// GIAO DIỆN MENU, ĐIỀU PHỐI VÀ LIÊN KẾT CÁC MODULE TOÀN HỆ THỐNG
 // ============================================================================
 
 void CandidateManager::displayAll() const {
@@ -282,6 +312,7 @@ void CandidateManager::run() {
     while (choice != 0) {
         showMenu();
         if (!(std::cin >> choice)) {
+            if (std::cin.eof()) break; // Thoat neu gap EOF hoac dong luong nhap
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "[!] Lua chon khong hop le! Vui long nhap so tu 0 den 11.\n";

@@ -1,111 +1,272 @@
-HƯỚNG DẪN SỬ DỤNG - DỰ ÁN CTDL&GT: QUẢN LÝ DANH SÁCH THÍ SINH
-----------------------------------------------------------------------
-Đề tài số 8: Quản lý danh sách thí sinh (Hash table, Linked list)
-Giảng viên hướng dẫn: ThS. Bùi Văn Thượng
-Nhóm thực hiện: Nhóm 4 - Lớp: 012012400212
+================================================================================
+          HƯỚNG DẪN CHI TIẾT DỰ ÁN BÀI TẬP LỚN CẤU TRÚC DỮ LIỆU & GIẢI THUẬT
+                       ĐỀ TÀI SỐ 8: QUẢN LÝ DANH SÁCH THÍ SINH
+                    (CẤU TRÚC BẢNG BĂM HASH TABLE & LINKED LIST)
+================================================================================
+- Giảng viên hướng dẫn: ThS. Bùi Văn Thượng
+- Lớp học phần: 012012400212 - Trường Đại học Giao thông Vận tải TP.HCM (UTH)
+- Đơn vị thực hiện: Nhóm 4
+- Trưởng nhóm: Nguyễn Bá Linh (MSSV: 044207007737)
+================================================================================
 
+MỤC LỤC:
+1. TỔNG QUAN ĐỀ TÀI & CƠ CHẾ HOẠT ĐỘNG
+2. CẤU TRÚC THƯ MỤC CHUẨN HÓA DỰ ÁN
+3. HƯỚNG DẪN BIÊN DỊCH VÀ CHẠY ỨNG DỤNG (CMAKE & G++)
+4. HƯỚNG DẪN CHI TIẾT NHIỆM VỤ CHO TỪNG THÀNH VIÊN (KÈM GỢI Ý VẤN ĐÁP)
+   4.1. Nguyễn Bá Linh   - Trưởng nhóm: Kiến trúc cốt lõi, LinkedList, HashTable, Menu
+   4.2. Hoàng Thế Anh    - Thêm thí sinh (kiểm tra trùng SBD), Cập nhật thông tin
+   4.3. Trần Nhật Anh    - Tra cứu theo SBD, Tra cứu theo Tên, Xóa thí sinh
+   4.4. Nguyễn Hữu Cường - Sắp xếp danh sách thí sinh theo Tên A-Z trên DSLK
+   4.5. Phạm Khánh Hưng  - Phân chia danh sách vào n phòng thi tối ưu xác suất
+   4.6. Đào Quang Thắng  - Đọc và ghi file dữ liệu TXT (input.txt / output.txt)
+5. QUY CHUẨN ĐỊNH DẠNG FILE DỮ LIỆU (INPUT.TXT)
+6. CÁC LỖI KINH ĐIỂN CẦN TRÁNH TRONG MÔN CTDL&GT (ĐẶC BIỆT LÚC VẤN ĐÁP)
 
-1. MÔ TẢ DỰ ÁN
+--------------------------------------------------------------------------------
+1. TỔNG QUAN ĐỀ TÀI & CƠ CHẾ HOẠT ĐỘNG
+--------------------------------------------------------------------------------
+Đề tài yêu cầu quản lý thông tin thí sinh tham gia kỳ thi:
+- Mỗi thí sinh gồm: Mã dự thi (SBD), Họ và tên, Giới tính, Ngày sinh, Quê quán.
+- Hai cấu trúc dữ liệu nền tảng được kết hợp:
+  1. Danh sách liên kết đơn (Linked List): Quản lý tập hợp thí sinh dạng động trong bộ nhớ RAM,
+     cho phép thêm/xóa linh hoạt mà không cần cấp phát mảng cố định trước.
+  2. Bảng băm dạng bảng tra (Hash Table with Chaining): Gồm 26 bucket tương ứng 26 chữ cái (A-Z).
+     Khóa băm (key) là chữ cái đầu tiên của Tên chính của thí sinh (ví dụ: "Nguyen Ba Linh" -> Tên "Linh"
+     -> Ký tự băm là 'L' -> bucket chỉ số 11).
+     Khi cần tra cứu thí sinh theo tên, hệ thống không cần duyệt hết N thí sinh (O(N)), mà chỉ cần
+     tính hàm băm O(1) để đến ngay nhóm tương ứng rồi duyệt danh sách con!
 
-Dự án mô phỏng hệ thống Quản lý danh sách thí sinh bằng C++ theo chuẩn kiến trúc
-môn Cấu trúc Dữ liệu và Giải thuật (CTDL&GT).
-Dự án áp dụng 2 cấu trúc dữ liệu cốt lõi:
-- Danh sách liên kết đơn (Linked List): Lưu trữ toàn bộ thí sinh động bằng con trỏ Node.
-- Bảng băm dạng bảng tra (Hash Table): Gồm 26 bucket (A-Z) để phân loại và tra cứu cực nhanh theo chữ cái đầu của Tên thí sinh.
-
-
-2. CẤU TRÚC THƯ MỤC
-
+--------------------------------------------------------------------------------
+2. CẤU TRÚC THƯ MỤC CHUẨN HÓA DỰ ÁN
+--------------------------------------------------------------------------------
 candidate-management/
-├── CMakeLists.txt              File cấu hình build bằng CMake
-├── main.cpp                    Điểm bắt đầu chương trình (khởi tạo app và run)
-├── Candidate.h / .cpp          Lớp Candidate: Lưu thông tin thí sinh (SBD, Họ tên, Ngày sinh,...)
-├── LinkedList.h / .cpp         Cấu trúc Node & Danh sách liên kết đơn (Nguyễn Bá Linh)
-├── HashTable.h / .cpp          Cấu trúc Bảng băm 26 bucket A-Z dạng bảng tra (Nguyễn Bá Linh)
-├── CandidateManager.h / .cpp   Bộ quản lý menu và điều phối hệ thống
-│                               ├── Thêm, sửa thí sinh (Hoàng Thế Anh)
-│                               └── Tra cứu SBD/Tên, xóa thí sinh (Trần Nhật Anh)
-├── Sorter.h / .cpp             Thuật toán sắp xếp danh sách theo tên A-Z (Nguyễn Hữu Cường)
-├── RoomAllocator.h / .cpp      Phân chia n phòng thi giảm thiểu trùng chữ cái (Phạm Khánh Hưng)
-├── Utils.h / .cpp              Hàm đọc / ghi file dữ liệu thí sinh (Đào Quang Thắng)
-├── input.txt                   Dữ liệu mẫu 30 thí sinh (CSV)
-└── build/                      Thư mục build chương trình (tự động tạo khi chạy CMake)
+├── CMakeLists.txt              # Cấu hình biên dịch tự động bằng CMake (C++17)
+├── HUONGDAN.txt                # Tài liệu hướng dẫn này
+├── input.txt                   # Bộ dữ liệu mẫu 30 thí sinh (CSV)
+├── main.cpp                    # Hàm main: Điểm khởi động chương trình
+│
+├── Candidate.h / .cpp          # [Linh] Class Thí sinh: Thuộc tính & trích xuất tên/chữ cái
+├── LinkedList.h / .cpp         # [Linh] Struct Node & Class Danh sách liên kết đơn
+├── HashTable.h / .cpp          # [Linh] Class Bảng băm 26 bucket A-Z dạng bảng tra
+│
+├── CandidateManager.h / .cpp   # Quản lý giao diện, menu và kết nối các chức năng
+│   ├── Menu & Main Loop        # [Linh] Điều phối, nạp dữ liệu mẫu ban đầu
+│   ├── addCandidate, update    # [Thế Anh] Thêm mới & cập nhật thí sinh
+│   └── search, deleteCandidate # [Nhật Anh] Tra cứu theo SBD/Tên & xóa thí sinh
+│
+├── Sorter.h / .cpp             # [Hữu Cường] Thuật toán sắp xếp danh sách theo tên A-Z
+├── RoomAllocator.h / .cpp      # [Khánh Hưng] Phân chia thí sinh vào n phòng thi
+└── Utils.h / .cpp              # [Quang Thắng] Đọc/ghi file input.txt và file xuất TXT
 
+--------------------------------------------------------------------------------
+3. HƯỚNG DẪN BIÊN DỊCH VÀ CHẠY ỨNG DỤNG
+--------------------------------------------------------------------------------
+A. Cách 1: Sử dụng CMake (Chuẩn theo các dự án chuyên nghiệp):
+   Bước 1: Mở Terminal (Command Prompt hoặc PowerShell) tại thư mục `candidate-management`
+   Bước 2: Tạo thư mục build và chạy CMake:
+           mkdir build
+           cd build
+           cmake ..
+   Bước 3: Biên dịch mã nguồn:
+           cmake --build .
+   Bước 4: Chạy file thực thi:
+           app.exe       (trên Windows)
+           ./app         (trên Linux / macOS)
+   *Ghi chú: CMakeLists.txt đã cấu hình tự động sao chép input.txt vào thư mục build/.
 
-3. YÊU CẦU HỆ THỐNG
+B. Cách 2: Biên dịch trực tiếp bằng g++ (Đơn giản, nhanh gọn):
+   Mở Terminal tại thư mục `candidate-management` và gõ 1 lệnh duy nhất:
+   g++ -std=c++17 main.cpp Candidate.cpp LinkedList.cpp HashTable.cpp CandidateManager.cpp Sorter.cpp RoomAllocator.cpp Utils.cpp -o app.exe
+   Sau đó chạy:
+   app.exe
 
-- Trình biên dịch C++ hỗ trợ C++17 trở lên (GCC / Clang / MSVC)
-- CMake phiên bản >= 3.10
-- Hệ điều hành: Windows, Linux hoặc macOS
+--------------------------------------------------------------------------------
+4. HƯỚNG DẪN CHI TIẾT NHIỆM VỤ CHO TỪNG THÀNH VIÊN
+--------------------------------------------------------------------------------
 
+4.1. NGUYỄN BÁ LINH (Trưởng nhóm - MSSV: 044207007737)
+- File phụ trách:
+  + Candidate.h / Candidate.cpp
+  + LinkedList.h / LinkedList.cpp
+  + HashTable.h / HashTable.cpp
+  + CandidateManager.h / CandidateManager.cpp (phần menu showMenu, run, initSampleData)
+  + main.cpp
+- Trạng thái: ĐÃ HOÀN THIỆN 100%, chạy thử nghiệm chuẩn xác.
+- Câu hỏi vấn đáp mẫu:
+  * Thầy hỏi: "Tại sao em cài đặt LinkedList có cả con trỏ head và tail?"
+  * Trả lời: "Dạ thưa Thầy, có thêm con trỏ tail giúp thao tác thêm thí sinh vào cuối danh sách
+    (insertTail) đạt độ phức tạp O(1) thay vì phải duyệt từ đầu đến cuối tốn O(N)."
+  * Thầy hỏi: "Hàm băm dạng bảng tra của em hoạt động thế nào?"
+  * Trả lời: "Dạ, hàm hashFunction(c) lấy ký tự đầu của Tên thí sinh, chuyển in hoa rồi trừ đi ký tự 'A'
+    (c - 'A') để ánh xạ chính xác về chỉ số từ 0 đến 25, đạt thời gian tính toán O(1)."
 
-4. HƯỚNG DẪN BUILD VÀ CHẠY
+4.2. HOÀNG THẾ ANH
+- File phụ trách: CandidateManager.h & CandidateManager.cpp
+- Các hàm cần viết code:
+  1. `bool CandidateManager::addCandidate()`:
+     - Bước 1: Nhập Số Báo Danh (sbd) từ bàn phím.
+     - Bước 2: Dùng con trỏ kiểm tra trùng SBD:
+               Node* pCheck = candidateList.find(sbd);
+               Nếu pCheck != nullptr -> thông báo lỗi mã đã tồn tại và return false.
+     - Bước 3: Nhập Họ tên, Giới tính, Ngày sinh, Quê quán.
+     - Bước 4: Khởi tạo đối tượng Candidate mới: Candidate c(sbd, hoTen, gioiTinh, ngaySinh, queQuan);
+     - Bước 5: Chèn đồng thời vào cả 2 cấu trúc:
+               candidateList.insertTail(c);
+               hashTable.insert(c);
+     - Bước 6: Thông báo thành công và return true.
+  2. `bool CandidateManager::updateCandidate()`:
+     - Bước 1: Nhập SBD cần sửa.
+     - Bước 2: Tìm nút cần sửa: Node* p = candidateList.find(sbd);
+               Nếu p == nullptr -> báo không tìm thấy.
+     - Bước 3: Cho người dùng nhập thông tin mới và gán lại qua các hàm setter:
+               p->data.setHoTen(newHoTen); ...
+- Câu hỏi vấn đáp mẫu:
+  * Thầy hỏi: "Khi kiểm tra trùng SBD, em dùng giải thuật gì và độ phức tạp bao nhiêu?"
+  * Trả lời: "Dạ, em dùng con trỏ duyệt tuyến tính (Linear Search) trên danh sách liên kết từ head
+    đến khi gặp SBD trùng hoặc hết danh sách, độ phức tạp trường hợp xấu nhất là O(N)."
 
-Cách 1: Sử dụng CMake (khuyến nghị chuẩn theo nhóm mẫu):
-    Bước 1: Mở Terminal tại thư mục `candidate-management`
-    Bước 2: Tạo thư mục build và cấu hình:
-            mkdir build
-            cd build
-            cmake ..
-    Bước 3: Biên dịch chương trình:
-            cmake --build .
-    Bước 4: Chạy chương trình:
-            ./app           (trên Linux/macOS)
-            app.exe         (trên Windows)
+4.3. TRẦN NHẬT ANH
+- File phụ trách: CandidateManager.h & CandidateManager.cpp
+- Các hàm cần viết code:
+  1. `void CandidateManager::searchBySBD()`:
+     - Nhập SBD từ bàn phím.
+     - Gọi `Node* p = hashTable.searchBySBD(sbd);` (hoặc `candidateList.find(sbd);`).
+     - Nếu p != nullptr -> gọi `p->data.displayRow();`. Ngược lại báo không tìm thấy.
+  2. `void CandidateManager::searchByName()`:
+     - Nhập Tên cần tìm (ví dụ: "Linh", "Anh").
+     - Gọi trực tiếp hàm băm dạng bảng tra: `hashTable.searchByName(name);`.
+     - Ưu điểm: Bảng băm nhảy thẳng đến bucket tương ứng trong O(1) rồi chỉ duyệt các thí sinh có cùng
+       chữ cái đầu, không cần duyệt qua toàn bộ N thí sinh!
+  3. `bool CandidateManager::deleteCandidate()`:
+     - Nhập SBD cần xóa.
+     - Tìm nút trong danh sách để lấy chữ cái đầu của Tên: char letter = p->data.getFirstLetterOfName();
+     - Xóa khỏi LinkedList: `candidateList.remove(sbd);`
+     - Xóa khỏi HashTable: `hashTable.remove(sbd, letter);`
+- Câu hỏi vấn đáp mẫu:
+  * Thầy hỏi: "Thao tác xóa một nút trên danh sách liên kết đơn có những trường hợp nào?"
+  * Trả lời: "Dạ thưa Thầy, có 2 trường hợp:
+    1. Nút cần xóa ở ngay đầu danh sách (head): ta cập nhật head = head->next rồi delete nút tạm.
+    2. Nút cần xóa ở giữa hoặc cuối: ta dùng con trỏ prev đi trước nút curr, cập nhật prev->next = curr->next,
+       nếu nút xóa là tail thì cập nhật lại tail = prev, sau đó delete curr."
 
-Cách 2: Biên dịch nhanh bằng g++ (không cần CMake):
-    g++ -std=c++17 main.cpp Candidate.cpp LinkedList.cpp HashTable.cpp CandidateManager.cpp Sorter.cpp RoomAllocator.cpp Utils.cpp -o app.exe
-    ./app.exe
+4.4. NGUYỄN HỮU CƯỜNG
+- File phụ trách: Sorter.h & Sorter.cpp
+- Hàm cần viết code: `void Sorter::sortByNameAZ(LinkedList &list)`
+- Hướng dẫn thuật toán:
+  * Yêu cầu môn học: Sắp xếp danh sách liên kết bằng con trỏ!
+  * Sử dụng thuật toán Interchange Sort / Selection Sort trên DSLK:
+    - Bước 1: Kiểm tra nếu `list.getHead() == nullptr` hoặc `list.getHead()->next == nullptr` thì return.
+    - Bước 2: Dùng 2 con trỏ `i` và `j` lồng nhau:
+              for (Node* i = list.getHead(); i != nullptr; i = i->next) {
+                  for (Node* j = i->next; j != nullptr; j = j->next) {
+                      // So sánh tên gọi:
+                      if (i->data.getFirstName() > j->data.getFirstName()) {
+                          // Hoán đổi dữ liệu data giữa 2 nút:
+                          Candidate temp = i->data;
+                          i->data = j->data;
+                          j->data = temp;
+                      }
+                      // Nếu trùng tên -> so sánh cả họ tên đầy đủ:
+                      else if (i->data.getFirstName() == j->data.getFirstName()) {
+                          if (i->data.getHoTen() > j->data.getHoTen()) {
+                              Candidate temp = i->data;
+                              i->data = j->data;
+                              j->data = temp;
+                          }
+                      }
+                  }
+              }
+    - Bước 3: In thông báo và gọi `list.display();` để xem danh sách đã được sắp xếp tăng dần A-Z.
+- Câu hỏi vấn đáp mẫu:
+  * Thầy hỏi: "Độ phức tạp của thuật toán sắp xếp này là bao nhiêu? Có hoán đổi liên kết hay hoán đổi dữ liệu?"
+  * Trả lời: "Dạ thưa Thầy, độ phức tạp là O(N^2) số lần so sánh. Ở đây em lựa chọn hoán đổi giá trị data
+    giữa 2 nút vì cấu trúc Candidate gọn gàng, giúp code tường minh và tránh rủi ro đứt gãy con trỏ next."
 
+4.5. PHẠM KHÁNH HƯNG
+- File phụ trách: RoomAllocator.h & RoomAllocator.cpp
+- Hàm cần viết code: `void RoomAllocator::allocateRooms(const LinkedList &list, const HashTable &table, int numRooms)`
+- Hướng dẫn thuật toán tối ưu xác suất:
+  * Đề bài yêu cầu: Phân danh sách vào n phòng thi sao cho xác suất trùng chữ cái đầu của tên trong cùng 1 phòng là ít nhất.
+  * Ý tưởng thuật toán cực hay dựa trên Bảng băm:
+    - Bảng băm đã nhóm sẵn tất cả thí sinh có cùng chữ cái đầu vào từng bucket (từ 'A' đến 'Z').
+    - Do đó, duyệt qua từng bucket từ 0 đến 25:
+      + Với mỗi nhóm chữ cái (ví dụ nhóm 'A' gồm: An, Anh, Ánh...): ta dùng kỹ thuật Round-Robin rải đều
+        lần lượt từng thí sinh vào các phòng thi: phòng 0, phòng 1, phòng 2... phòng n-1 rồi quay lại 0!
+      + Nhờ rải đều theo chu kỳ, các thí sinh có cùng chữ cái đầu sẽ nằm ở các phòng KHÁC NHAU,
+        giúp xác suất trùng chữ cái đầu trong mỗi phòng đạt mức TỐI THIỂU!
+    - Bước thực hiện:
+      1. Khởi tạo mảng n phòng thi: `std::vector<LinkedList> rooms(numRooms);`
+      2. Biến con trỏ phòng xoay vòng: `int curRoom = 0;`
+      3. Duyệt 26 bucket của HashTable:
+         for (int b = 0; b < HashTable::TABLE_SIZE; ++b) {
+             const LinkedList& bucket = table.getBucket(b);
+             Node* p = bucket.getHead();
+             while (p != nullptr) {
+                 rooms[curRoom].insertTail(p->data);
+                 curRoom = (curRoom + 1) % numRooms; // Xoay vòng
+                 p = p->next;
+             }
+         }
+      4. In danh sách thí sinh từng phòng ra màn hình.
+- Câu hỏi vấn đáp mẫu:
+  * Thầy hỏi: "Giải thuật của em tại sao lại đảm bảo xác suất trùng chữ cái đầu là nhỏ nhất?"
+  * Trả lời: "Dạ thưa Thầy, vì em tận dụng tính chất phân nhóm của Bảng băm 26 bucket. Khi rải thí sinh trong
+    cùng một bucket qua các phòng thi khác nhau theo cơ chế xoay vòng Round-Robin, không phòng nào bị tập trung
+    nhiều thí sinh có cùng ký tự đầu, từ đó tối thiểu hóa xác suất trùng lặp."
 
-5. CHỨC NĂNG CHÍNH
+4.6. ĐÀO QUANG THẮNG
+- File phụ trách: Utils.h & Utils.cpp, input.txt
+- Các hàm cần viết code:
+  1. `bool Utils::loadFromFile(const string &filename, LinkedList &list, HashTable &table)`:
+     - Mở tệp: `std::ifstream fin(filename);`
+     - Bỏ qua dòng tiêu đề: `std::getline(fin, line);`
+     - Dùng vòng lặp `while (std::getline(fin, line))` đọc từng dòng.
+     - Dùng `std::stringstream ss(line)` tách 5 trường cách nhau bằng dấu phẩy: sbd, hoTen, gioiTinh, ngaySinh, queQuan.
+     - Tạo đối tượng `Candidate c(...)` và thêm vào cả `list.insertTail(c);` lẫn `table.insert(c);`.
+     - Đóng file `fin.close();` và return true.
+  2. `bool Utils::saveToFile(const string &filename, const LinkedList &list)`:
+     - Mở tệp ghi: `std::ofstream fout(filename);`
+     - Ghi dòng tiêu đề CSV: `fout << "SBD,HoTen,GioiTinh,NgaySinh,QueQuan\n";`
+     - Dùng con trỏ duyệt danh sách:
+       Node* p = list.getHead();
+       while (p != nullptr) {
+           fout << p->data.getSBD() << "," << p->data.getHoTen() << ","
+                << p->data.getGioiTinh() << "," << p->data.getNgaySinh() << ","
+                << p->data.getQueQuan() << "\n";
+           p = p->next;
+       }
+     - Đóng file `fout.close();` và return true.
+- Câu hỏi vấn đáp mẫu:
+  * Thầy hỏi: "Khi đọc file vào danh sách liên kết, em thêm vào đầu (insertHead) hay thêm vào cuối (insertTail)?"
+  * Trả lời: "Dạ thưa Thầy, em thêm vào cuối (insertTail) để giữ nguyên đúng thứ tự các thí sinh xuất hiện
+    trong file dữ liệu ban đầu, với chi phí O(1) nhờ con trỏ tail."
 
-1. Hiển thị danh sách tất cả thí sinh (duyệt Danh sách liên kết).
-2. Xem Bảng băm thí sinh dạng bảng tra 26 nhóm chữ cái từ A đến Z.
-3. Thêm thí sinh mới (kiểm tra trùng SBD, thêm vào List và HashTable).
-4. Cập nhật thông tin thí sinh theo SBD.
-5. Tra cứu thí sinh theo Số Báo Danh (SBD).
-6. Tra cứu thí sinh theo Tên trên Bảng băm (độ phức tạp O(1) đến nhóm bucket).
-7. Xóa thí sinh khỏi hệ thống theo SBD.
-8. Sắp xếp danh sách thí sinh theo Tên tăng dần từ A đến Z.
-9. Phân chia thí sinh vào n phòng thi sao cho xác suất trùng chữ cái đầu là nhỏ nhất.
-10. Đọc dữ liệu thí sinh từ file input.txt.
-11. Lưu trữ danh sách thí sinh ra file TXT.
-
-
-6. ĐỊNH DẠNG FILE INPUT.TXT
-
-Mỗi dòng là một thí sinh, các trường cách nhau bởi dấu phẩy:
-    SBD,HoTen,GioiTinh,NgaySinh,QueQuan
+--------------------------------------------------------------------------------
+5. QUY CHUẨN ĐỊNH DẠNG FILE DỮ LIỆU (INPUT.TXT)
+--------------------------------------------------------------------------------
+File input.txt được lưu dưới dạng CSV ngăn cách bằng dấu phẩy, mã hóa UTF-8:
+Dòng đầu tiên: Tiêu đề các trường
+Các dòng tiếp theo: Dữ liệu từng thí sinh
 
 Ví dụ:
-    TS001,Nguyen Ba Linh,Nam,15/08/2004,TP. Ho Chi Minh
-    TS002,Hoang The Anh,Nam,20/01/2004,Ha Noi
-    TS003,Tran Nhat Anh,Nam,10/05/2004,Da Nang
+SBD,HoTen,GioiTinh,NgaySinh,QueQuan
+TS001,Nguyen Ba Linh,Nam,15/08/2004,TP. Ho Chi Minh
+TS002,Hoang The Anh,Nam,20/01/2004,Ha Noi
+TS003,Tran Nhat Anh,Nam,10/05/2004,Da Nang
+TS004,Nguyen Huu Cuong,Nam,12/12/2004,Nghe An
+TS005,Pham Khanh Hung,Nam,03/04/2004,Dong Nai
+TS006,Dao Quang Thang,Nam,18/09/2004,Binh Duong
 
-
-7. PHÂN CHIA NHIỆM VỤ THEO FILE (6 THÀNH VIÊN)
-
-1. Nguyễn Bá Linh (Trưởng nhóm):
-   - File: Candidate.h, Candidate.cpp, LinkedList.h, LinkedList.cpp, HashTable.h, HashTable.cpp, main.cpp
-   - Trách nhiệm: Kiến trúc dữ liệu cốt lõi, danh sách liên kết đơn, bảng băm 26 bucket A-Z, menu chính.
-
-2. Hoàng Thế Anh:
-   - File: CandidateManager.h, CandidateManager.cpp (hàm addCandidate, updateCandidate)
-   - Trách nhiệm: Thêm thí sinh, duyệt con trỏ kiểm tra trùng SBD, sửa thông tin thí sinh.
-
-3. Trần Nhật Anh:
-   - File: CandidateManager.h, CandidateManager.cpp (hàm searchBySBD, searchByName, deleteCandidate)
-   - Trách nhiệm: Tra cứu thí sinh theo SBD & theo Tên, giải phóng bộ nhớ và xóa nút bằng con trỏ.
-
-4. Nguyễn Hữu Cường:
-   - File: Sorter.h, Sorter.cpp
-   - Trách nhiệm: Sắp xếp danh sách liên kết đơn theo thứ tự Tên tăng dần A-Z.
-
-5. Phạm Khánh Hưng:
-   - File: RoomAllocator.h, RoomAllocator.cpp
-   - Trách nhiệm: Phân chia n phòng thi bằng kỹ thuật Round-Robin trên các bucket chữ cái của bảng băm.
-
-6. Đào Quang Thắng:
-   - File: Utils.h, Utils.cpp, input.txt
-   - Trách nhiệm: Xử lý đọc file input.txt vào hệ thống và ghi file danh sách thí sinh ra TXT.
+--------------------------------------------------------------------------------
+6. CÁC LỖI KINH ĐIỂN CẦN TRÁNH TRONG MÔN CTDL&GT (ĐẶC BIỆT LÚC VẤN ĐÁP)
+--------------------------------------------------------------------------------
+1. Lỗi Null Pointer Dereference: Luôn kiểm tra con trỏ khác `nullptr` trước khi truy cập `p->data` hoặc `p->next`.
+2. Lỗi rò rỉ bộ nhớ (Memory Leak): Khi xóa một nút trên DSLK, phải gán con trỏ tạm rồi mới `delete`, tránh làm
+   mất liên kết tới các nút phía sau. Lớp LinkedList đã có Destructor `~LinkedList()` giải phóng toàn bộ bộ nhớ.
+3. Lỗi thứ tự nối dây con trỏ:
+   Khi chèn nút mới vào giữa:
+   - ĐÚNG: `newNode->next = p->next; p->next = newNode;`
+   - SAI:  `p->next = newNode; newNode->next = p->next;` (sẽ tạo vòng lặp vô hạn và mất toàn bộ danh sách phía sau!).
+4. Lỗi băm vượt kích thước mảng: Hàm băm `hashFunction` luôn đảm bảo chỉ số trả về nằm trong khoảng [0, 25].
+================================================================================
