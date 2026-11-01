@@ -7,12 +7,29 @@
 using namespace std;
 
 // =========================================================================
-// PHẦN 6: ĐÀO QUANG THẮNG
-// Chức năng: Lưu trữ và Đọc dữ liệu từ file TXT (candidates.txt)
+// PHẦN 6: ĐÀO QUANG THẮNG PHỤ TRÁCH
+// ĐỀ TÀI: CHỨC NĂNG LƯU TRỮ VÀ ĐỌC DỮ LIỆU TỪ FILE TXT
+//
+// YÊU CẦU CỦA MÔN HỌC:
+// 1. Lưu trữ dữ liệu: Dùng con trỏ duyệt qua toàn bộ các danh sách liên kết
+//    trong bảng băm để ghi dữ liệu từng thí sinh ra file văn bản candidates.txt.
+// 2. Đọc dữ liệu: Mở file candidates.txt, đọc từng dòng, tách các trường
+//    thông tin (ma, ten, gt, ns, que) và tự tạo node chèn lại vào bảng băm.
 // =========================================================================
 
-// Lưu toàn bộ bảng băm ra file TXT
+// -------------------------------------------------------------------------
+// TODO 1 (Quang Thắng tự code): Hàm lưu toàn bộ bảng băm ra file TXT
+// Hướng dẫn:
+// - Khai báo: ofstream file(tenFile);
+// - Duyệt vòng for i từ 0 đến 25:
+//     + Khai báo con trỏ: Node* p = bangBam[i].head;
+//     + Vòng while (p != NULL):
+//         * Ghi: file << p->data.maDuThi << "|" << p->data.hoTen << "|" ... << "\n";
+//         * Di chuyển con trỏ: p = p->next;
+// - Đóng file: file.close();
+// -------------------------------------------------------------------------
 inline void luuFile(string tenFile) {
+    // --- THẮNG DÙNG CON TRỎ DUYỆT BẢNG BĂM VÀ GHI FILE Ở ĐÂY ---
     ofstream file(tenFile);
     if (!file.is_open()) {
         cout << "[Loi] Khong the mo file de ghi!\n";
@@ -34,12 +51,23 @@ inline void luuFile(string tenFile) {
     cout << "[Thanh cong] Da luu du lieu vao file: " << tenFile << "\n";
 }
 
-// Đọc dữ liệu từ file TXT nạp vào bảng băm
+// -------------------------------------------------------------------------
+// TODO 2 (Quang Thắng tự code): Hàm đọc dữ liệu từ file TXT nạp vào bảng băm
+// Hướng dẫn:
+// - Khai báo: ifstream file(tenFile);
+// - Làm rỗng bảng băm: khoiTaoBangBam();
+// - Đọc từng dòng: while (getline(file, line)):
+//     + Tách chuỗi theo dấu "|" để lấy maDuThi, hoTen, gioiTinh, ngaySinh, queQuan.
+//     + Băm ký tự đầu để tìm vị trí bucket: viTri = hamBam(layChuCaiDau(ts.hoTen));
+//     + Tạo Node và gắn vào cuối: themVaoCuoi(bangBam[viTri], taoNode(ts));
+// - Đóng file và trả về số lượng thí sinh đã nạp.
+// -------------------------------------------------------------------------
 inline int docFile(string tenFile) {
+    // --- THẮNG ĐỌC FILE VÀ NẠP VÀO BẢNG BĂM Ở ĐÂY ---
     ifstream file(tenFile);
     if (!file.is_open()) return 0;
 
-    khoiTaoBangBam(); // Làm rỗng bảng băm trước khi nạp
+    khoiTaoBangBam();
     string line;
     int dem = 0;
 

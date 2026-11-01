@@ -9,13 +9,28 @@
 using namespace std;
 
 // =========================================================================
-// PHẦN 4: NGUYỄN HỮU CƯỜNG
-// Chức năng: Sắp xếp danh sách thí sinh tăng dần theo Tên & Hiển thị bảng
+// PHẦN 4: NGUYỄN HỮU CƯỜNG PHỤ TRÁCH
+// ĐỀ TÀI: CHỨC NĂNG SẮP XẾP DANH SÁCH THÍ SINH THEO TÊN TĂNG DẦN
+//
+// YÊU CẦU CỦA MÔN HỌC:
+// 1. Dùng con trỏ duyệt qua 26 danh sách liên kết trong bảng băm để lấy toàn bộ dữ liệu.
+// 2. Viết hàm so sánh thứ tự 2 thí sinh theo Tên (A-Z), nếu trùng Tên thì so sánh Họ và tên.
+// 3. Cài đặt thuật toán sắp xếp (Selection Sort hoặc Interchange Sort) đổi chỗ 2 phần tử.
+// 4. In bảng danh sách thí sinh đã sắp xếp ra màn hình console.
 // =========================================================================
 
-// Lấy toàn bộ thí sinh từ 26 bucket vào 1 vector để chuẩn bị sắp xếp
+// -------------------------------------------------------------------------
+// TODO 1 (Cường tự code): Dùng con trỏ gom toàn bộ thí sinh từ 26 List vào 1 vector
+// Hướng dẫn:
+// - Khai báo: vector<ThiSinh> danhSach;
+// - Duyệt vòng for i từ 0 đến 25:
+//     + Khai báo con trỏ: Node* p = bangBam[i].head;
+//     + Vòng while (p != NULL): danhSach.push_back(p->data); p = p->next;
+// - Trả về danhSach.
+// -------------------------------------------------------------------------
 inline vector<ThiSinh> layTatCaThiSinh() {
     vector<ThiSinh> danhSach;
+    // --- CƯỜNG TỰ DÙNG CON TRỎ DUYỆT 26 LIST Ở ĐÂY ---
     for (int i = 0; i < 26; i++) {
         Node* p = bangBam[i].head;
         while (p != NULL) {
@@ -26,16 +41,30 @@ inline vector<ThiSinh> layTatCaThiSinh() {
     return danhSach;
 }
 
-// Hàm so sánh 2 thí sinh: ưu tiên so sánh Tên (A-Z), nếu trùng tên thì so sánh Họ tên
+// -------------------------------------------------------------------------
+// TODO 2 (Cường tự code): Hàm so sánh thứ tự 2 thí sinh a và b theo Tên
+// Hướng dẫn:
+// - Lấy tên của a: string tenA = layTen(a.hoTen);
+// - Lấy tên của b: string tenB = layTen(b.hoTen);
+// - Nếu (tenA != tenB) thì return tenA < tenB;
+// - Nếu trùng tên: so sánh tiếp a.hoTen < b.hoTen;
+// -------------------------------------------------------------------------
 inline bool soSanhTen(ThiSinh a, ThiSinh b) {
+    // --- CƯỜNG TỰ VIẾT HÀM SO SÁNH Ở ĐÂY ---
     string tenA = layTen(a.hoTen);
     string tenB = layTen(b.hoTen);
     if (tenA != tenB) return tenA < tenB;
     return a.hoTen < b.hoTen;
 }
 
-// Thuật toán sắp xếp danh sách theo Tên tăng dần
+// -------------------------------------------------------------------------
+// TODO 3 (Cường tự code): Cài đặt thuật toán sắp xếp danh sách theo Tên tăng dần
+// Hướng dẫn (Thuật toán Chọn trực tiếp / Selection Sort):
+// - 2 vòng lặp lồng nhau: for (int i = 0; i < n - 1; i++) và for (int j = i + 1; j < n; j++)
+// - Tìm phần tử nhỏ nhất và hoán vị (swap) ds[i] với ds[minIdx].
+// -------------------------------------------------------------------------
 inline void sapXepTheoTen(vector<ThiSinh> &ds) {
+    // --- CƯỜNG TỰ VIẾT THUẬT TOÁN SẮP XẾP Ở ĐÂY ---
     int n = ds.size();
     for (int i = 0; i < n - 1; i++) {
         int minIdx = i;
@@ -52,7 +81,9 @@ inline void sapXepTheoTen(vector<ThiSinh> &ds) {
     }
 }
 
-// In danh sách thí sinh ra màn hình dạng bảng căn lề đẹp mắt
+// -------------------------------------------------------------------------
+// TODO 4 (Cường tự code): In bảng danh sách thí sinh ra màn hình console
+// -------------------------------------------------------------------------
 inline void inBangDanhSach(vector<ThiSinh> ds, string tieuDe) {
     cout << "\n=================================================================================\n";
     cout << "                    " << tieuDe << "\n";
