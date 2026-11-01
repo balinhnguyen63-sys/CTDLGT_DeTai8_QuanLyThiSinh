@@ -1,0 +1,31 @@
+SBD,HoTen,GioiTinh,NgaySinh,QueQuan
+TS001,Nguyen Ba Linh,Nam,15/08/2004,TP. Ho Chi Minh
+TS002,Hoang The Anh,Nam,20/01/2004,Ha Noi
+TS003,Tran Nhat Anh,Nam,10/05/2004,Da Nang
+TS004,Nguyen Huu Cuong,Nam,12/12/2004,Nghe An
+TS005,Pham Khanh Hung,Nam,03/04/2004,Dong Nai
+TS006,Dao Quang Thang,Nam,18/09/2004,Binh Duong
+TS007,Tran Van Binh,Nam,05/02/2004,Hai Phong
+TS008,Nguyen Thuy Dung,Nu,09/09/2004,Hue
+TS009,Le Tien Dat,Nam,25/03/2004,Thanh Hoa
+TS010,Vo Hoang Giang,Nam,14/07/2004,Quang Nam
+TS011,Bui Thanh Hai,Nam,19/10/2004,Nam Dinh
+TS012,Pham Thu Huong,Nu,28/06/2004,Thai Binh
+TS013,Do Quoc Khanh,Nam,02/08/2004,Bac Ninh
+TS014,Le Thi Mai,Nu,22/11/2004,Can Tho
+TS015,Vu Duc Minh,Nam,11/01/2004,Ha Giang
+TS016,Hoang Hoai Nam,Nam,30/04/2004,Quang Ninh
+TS017,Dang Hong Phuc,Nam,16/09/2004,Tien Giang
+TS018,Ngo Minh Quan,Nam,07/03/2004,Lam Dong
+TS019,Truong Thai Son,Nam,24/05/2004,Vung Tau
+TS020,Phan Anh Tuan,Nam,13/11/2004,Binh Dinh
+TS021,Nguyen Tuong Vy,Nu,08/02/2004,Long An
+TS022,Dinh Thanh Xuan,Nu,17/04/2004,Dak Lak
+TS023,Luu Hoang Yen,Nu,29/10/2004,An Giang
+TS024,Hoang Thi Lan,Nu,06/06/2004,Vinh Long
+TS025,Cao Van Loc,Nam,21/07/2004,Phu Yen
+TS026,Duong Ngoc Quynh,Nu,01/12/2004,Gia Lai
+TS027,Ta Quang Trung,Nam,15/05/2004,Quang Tri
+TS028,Mai Hoang Long,Nam,26/08/2004,Tay Ninh
+TS029,Nong Van Kien,Nam,04/09/2004,Cao Bang
+TS030,Ha My Duyen,Nu,18/03/2004,Kien Giang

@@ -4,8 +4,10 @@
 *.obj
 *.dll
 .build/
+build/
 .vscode/
 
 # Temporary files
 *.tmp
 update_report.py
+

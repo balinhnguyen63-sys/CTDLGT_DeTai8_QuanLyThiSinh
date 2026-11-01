@@ -1,0 +1,111 @@
+HƯỚNG DẪN SỬ DỤNG - DỰ ÁN CTDL&GT: QUẢN LÝ DANH SÁCH THÍ SINH
+----------------------------------------------------------------------
+Đề tài số 8: Quản lý danh sách thí sinh (Hash table, Linked list)
+Giảng viên hướng dẫn: ThS. Bùi Văn Thượng
+Nhóm thực hiện: Nhóm 4 - Lớp: 012012400212
+
+
+1. MÔ TẢ DỰ ÁN
+
+Dự án mô phỏng hệ thống Quản lý danh sách thí sinh bằng C++ theo chuẩn kiến trúc
+môn Cấu trúc Dữ liệu và Giải thuật (CTDL&GT).
+Dự án áp dụng 2 cấu trúc dữ liệu cốt lõi:
+- Danh sách liên kết đơn (Linked List): Lưu trữ toàn bộ thí sinh động bằng con trỏ Node.
+- Bảng băm dạng bảng tra (Hash Table): Gồm 26 bucket (A-Z) để phân loại và tra cứu cực nhanh theo chữ cái đầu của Tên thí sinh.
+
+
+2. CẤU TRÚC THƯ MỤC
+
+candidate-management/
+├── CMakeLists.txt              File cấu hình build bằng CMake
+├── main.cpp                    Điểm bắt đầu chương trình (khởi tạo app và run)
+├── Candidate.h / .cpp          Lớp Candidate: Lưu thông tin thí sinh (SBD, Họ tên, Ngày sinh,...)
+├── LinkedList.h / .cpp         Cấu trúc Node & Danh sách liên kết đơn (Nguyễn Bá Linh)
+├── HashTable.h / .cpp          Cấu trúc Bảng băm 26 bucket A-Z dạng bảng tra (Nguyễn Bá Linh)
+├── CandidateManager.h / .cpp   Bộ quản lý menu và điều phối hệ thống
+│                               ├── Thêm, sửa thí sinh (Hoàng Thế Anh)
+│                               └── Tra cứu SBD/Tên, xóa thí sinh (Trần Nhật Anh)
+├── Sorter.h / .cpp             Thuật toán sắp xếp danh sách theo tên A-Z (Nguyễn Hữu Cường)
+├── RoomAllocator.h / .cpp      Phân chia n phòng thi giảm thiểu trùng chữ cái (Phạm Khánh Hưng)
+├── Utils.h / .cpp              Hàm đọc / ghi file dữ liệu thí sinh (Đào Quang Thắng)
+├── input.txt                   Dữ liệu mẫu 30 thí sinh (CSV)
+└── build/                      Thư mục build chương trình (tự động tạo khi chạy CMake)
+
+
+3. YÊU CẦU HỆ THỐNG
+
+- Trình biên dịch C++ hỗ trợ C++17 trở lên (GCC / Clang / MSVC)
+- CMake phiên bản >= 3.10
+- Hệ điều hành: Windows, Linux hoặc macOS
+
+
+4. HƯỚNG DẪN BUILD VÀ CHẠY
+
+Cách 1: Sử dụng CMake (khuyến nghị chuẩn theo nhóm mẫu):
+    Bước 1: Mở Terminal tại thư mục `candidate-management`
+    Bước 2: Tạo thư mục build và cấu hình:
+            mkdir build
+            cd build
+            cmake ..
+    Bước 3: Biên dịch chương trình:
+            cmake --build .
+    Bước 4: Chạy chương trình:
+            ./app           (trên Linux/macOS)
+            app.exe         (trên Windows)
+
+Cách 2: Biên dịch nhanh bằng g++ (không cần CMake):
+    g++ -std=c++17 main.cpp Candidate.cpp LinkedList.cpp HashTable.cpp CandidateManager.cpp Sorter.cpp RoomAllocator.cpp Utils.cpp -o app.exe
+    ./app.exe
+
+
+5. CHỨC NĂNG CHÍNH
+
+1. Hiển thị danh sách tất cả thí sinh (duyệt Danh sách liên kết).
+2. Xem Bảng băm thí sinh dạng bảng tra 26 nhóm chữ cái từ A đến Z.
+3. Thêm thí sinh mới (kiểm tra trùng SBD, thêm vào List và HashTable).
+4. Cập nhật thông tin thí sinh theo SBD.
+5. Tra cứu thí sinh theo Số Báo Danh (SBD).
+6. Tra cứu thí sinh theo Tên trên Bảng băm (độ phức tạp O(1) đến nhóm bucket).
+7. Xóa thí sinh khỏi hệ thống theo SBD.
+8. Sắp xếp danh sách thí sinh theo Tên tăng dần từ A đến Z.
+9. Phân chia thí sinh vào n phòng thi sao cho xác suất trùng chữ cái đầu là nhỏ nhất.
+10. Đọc dữ liệu thí sinh từ file input.txt.
+11. Lưu trữ danh sách thí sinh ra file TXT.
+
+
+6. ĐỊNH DẠNG FILE INPUT.TXT
+
+Mỗi dòng là một thí sinh, các trường cách nhau bởi dấu phẩy:
+    SBD,HoTen,GioiTinh,NgaySinh,QueQuan
+
+Ví dụ:
+    TS001,Nguyen Ba Linh,Nam,15/08/2004,TP. Ho Chi Minh
+    TS002,Hoang The Anh,Nam,20/01/2004,Ha Noi
+    TS003,Tran Nhat Anh,Nam,10/05/2004,Da Nang
+
+
+7. PHÂN CHIA NHIỆM VỤ THEO FILE (6 THÀNH VIÊN)
+
+1. Nguyễn Bá Linh (Trưởng nhóm):
+   - File: Candidate.h, Candidate.cpp, LinkedList.h, LinkedList.cpp, HashTable.h, HashTable.cpp, main.cpp
+   - Trách nhiệm: Kiến trúc dữ liệu cốt lõi, danh sách liên kết đơn, bảng băm 26 bucket A-Z, menu chính.
+
+2. Hoàng Thế Anh:
+   - File: CandidateManager.h, CandidateManager.cpp (hàm addCandidate, updateCandidate)
+   - Trách nhiệm: Thêm thí sinh, duyệt con trỏ kiểm tra trùng SBD, sửa thông tin thí sinh.
+
+3. Trần Nhật Anh:
+   - File: CandidateManager.h, CandidateManager.cpp (hàm searchBySBD, searchByName, deleteCandidate)
+   - Trách nhiệm: Tra cứu thí sinh theo SBD & theo Tên, giải phóng bộ nhớ và xóa nút bằng con trỏ.
+
+4. Nguyễn Hữu Cường:
+   - File: Sorter.h, Sorter.cpp
+   - Trách nhiệm: Sắp xếp danh sách liên kết đơn theo thứ tự Tên tăng dần A-Z.
+
+5. Phạm Khánh Hưng:
+   - File: RoomAllocator.h, RoomAllocator.cpp
+   - Trách nhiệm: Phân chia n phòng thi bằng kỹ thuật Round-Robin trên các bucket chữ cái của bảng băm.
+
+6. Đào Quang Thắng:
+   - File: Utils.h, Utils.cpp, input.txt
+   - Trách nhiệm: Xử lý đọc file input.txt vào hệ thống và ghi file danh sách thí sinh ra TXT.
