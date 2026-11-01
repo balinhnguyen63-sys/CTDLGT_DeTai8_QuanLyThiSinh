@@ -1,0 +1,30 @@
+SBD001|Nguyen Ba Linh|Nam|15/08/2004|TP. Ho Chi Minh
+SBD002|Hoang The Anh|Nam|20/03/2004|Ha Noi
+SBD003|Tran Nhat Anh|Nam|12/11/2004|Da Nang
+SBD004|Nguyen Huu Cuong|Nam|05/06/2004|Nghe An
+SBD005|Pham Khanh Hung|Nam|18/09/2004|Binh Duong
+SBD006|Dao Quang Thang|Nam|22/01/2004|Hai Phong
+SBD007|Le Thi Mai Anh|Nu|10/02/2004|Hue
+SBD008|Vu Duc Binh|Nam|14/07/2004|Quang Ninh
+SBD009|Doan Van Chau|Nam|30/08/2004|Nam Dinh
+SBD010|Pham Tien Dung|Nam|09/04/2004|Thanh Hoa
+SBD011|Bui My Duyen|Nu|25/12/2004|Dong Nai
+SBD012|Dinh Hoang Giang|Nam|03/10/2004|Thai Binh
+SBD013|Nguyen Ngoc Ha|Nu|17/05/2004|Can Tho
+SBD014|Tran Quoc Huy|Nam|08/08/2004|Quang Nam
+SBD015|Pham Thu Huong|Nu|19/09/2004|Bac Ninh
+SBD016|Le Gia Huy|Nam|11/03/2004|Vung Tau
+SBD017|Ngo Quang Khai|Nam|02/02/2004|Ha Tinh
+SBD018|Dang Tuan Kiet|Nam|28/06/2004|Binh Dinh
+SBD019|Hoang Thi Lan|Nu|07/07/2004|Lam Dong
+SBD020|Nguyen Van Long|Nam|21/04/2004|Long An
+SBD021|Tran Thi Tuyet Mai|Nu|16/01/2004|Tien Giang
+SBD022|Phan Thanh Nam|Nam|29/10/2004|Khanh Hoa
+SBD023|Bui Thi Yen Nhi|Nu|04/09/2004|Ben Tre
+SBD024|Do Minh Quan|Nam|13/05/2004|Phu Tho
+SBD025|Nguyen Hong Son|Nam|24/11/2004|Vinh Phuc
+SBD026|Pham Minh Tam|Nam|31/03/2004|An Giang
+SBD027|Vo Van Thang|Nam|15/07/2004|Quang Binh
+SBD028|Nguyen Thi Thanh Thao|Nu|06/12/2004|Gia Lai
+SBD029|Tran Duc Thinh|Nam|18/08/2004|Tay Ninh
+SBD030|Le Van Vu|Nam|27/02/2004|Soc Trang
