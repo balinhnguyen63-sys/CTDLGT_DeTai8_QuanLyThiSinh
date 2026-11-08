@@ -141,107 +141,62 @@ bool CandidateManager::updateCandidate() {
     return false;
 }
 
-// ============================================================================
-// PHẦN VIỆC CỦA THÀNH VIÊN: TRẦN NHẬT ANH
-// NHIỆM VỤ: Tra cứu thí sinh (theo SBD & theo Tên qua Bảng băm) & Xóa thí sinh
-// KIẾN TRÚC ÁP DỤNG: Chương 2 (Tìm kiếm), Chương 4 (Xóa nút DSLK), Chương 6 (Bảng băm)
-// ============================================================================
 
 void CandidateManager::searchBySBD() {
-    // ------------------------------------------------------------------------
-    // KHAI BÁO CÁC BIẾN VÀ CON TRỎ CẦN THIẾT (ĐÃ THIẾT KẾ SẴN CHO NHẬT ANH):
-    // ------------------------------------------------------------------------
     std::string sbd;
     Node* result = nullptr;
 
-    // ------------------------------------------------------------------------
-    // HƯỚNG DẪN THỰC HIỆN TỪNG BƯỚC CHO TRẦN NHẬT ANH:
-    // ------------------------------------------------------------------------
-    // BƯỚC 1: Nhập Số Báo Danh cần tra cứu:
-    //         std::cout << "\n--- TRA CUU THI SINH THEO SO BAO DANH ---\n";
-    //         std::cout << "Nhap So Bao Danh: ";
-    //         std::cin >> sbd;
-    //
-    // BƯỚC 2: Sử dụng con trỏ tìm kiếm qua Bảng băm hoặc Danh sách liên kết:
-    //         result = hashTable.searchBySBD(sbd); // hoặc candidateList.find(sbd);
-    //
-    // BƯỚC 3: Kiểm tra nếu tìm thấy:
-    //         if (result != nullptr) {
-    //             std::cout << "\n[+] Tim thay thi sinh:\n";
-    //             std::cout << "+---------+-----------------------+---------+-------------+----------------------+\n";
-    //             std::cout << "| SBD     | Ho va Ten             | Phai    | Ngay Sinh   | Que Quan             |\n";
-    //             std::cout << "+---------+-----------------------+---------+-------------+----------------------+\n";
-    //             result->data.displayRow();
-    //             std::cout << "+---------+-----------------------+---------+-------------+----------------------+\n";
-    //         } else {
-    //             std::cout << "[-] Khong tim thay thi sinh co SBD: " << sbd << "\n";
-    //         }
-    // ------------------------------------------------------------------------
+    std::cout << "\n--- TRA CUU THI SINH THEO SO BAO DANH ---\n";
+    std::cout << "Nhap So Bao Danh: ";
+    std::cin >> sbd;
 
-    // THÔNG BÁO TẠM THỜI:
-    std::cout << "\n[!] Thong bao tu he thong: Chuc nang 'Tra cuu theo So Bao Danh'\n";
-    std::cout << "    dang duoc thanh vien [Tran Nhat Anh] hoan thien theo huong dan trong CandidateManager.cpp.\n";
+    result = candidateList.find(sbd);
+
+    if (result != nullptr) {
+        std::cout << "\n[+] Tim thay thi sinh:\n";
+        result->data.displayRow();
+    }
+    else {
+        std::cout << "[-] Khong tim thay thi sinh co SBD: " << sbd << "\n";
+    }
 }
+   
 
 void CandidateManager::searchByName() {
-    // ------------------------------------------------------------------------
-    // KHAI BÁO CÁC BIẾN CẦN THIẾT (ĐÃ THIẾT KẾ SẴN CHO NHẬT ANH):
-    // ------------------------------------------------------------------------
     std::string name;
 
-    // ------------------------------------------------------------------------
-    // HƯỚNG DẪN THỰC HIỆN TỪNG BƯỚC CHO TRẦN NHẬT ANH:
-    // ------------------------------------------------------------------------
-    // BƯỚC 1: Nhập tên cần tra cứu:
-    //         std::cout << "\n--- TRA CUU THI SINH THEO TEN (BANG BAM) ---\n";
-    //         std::cout << "Nhap Ten thi sinh (vi du: Linh, Anh, Cuong...): ";
-    //         std::cin >> name;
-    //
-    // BƯỚC 2: Tận dụng Bảng băm dạng bảng tra để tìm kiếm cực nhanh O(1):
-    //         hashTable.searchByName(name);
-    // ------------------------------------------------------------------------
+    std::cout << "\n--- TRA CUU THI SINH THEO TEN ---\n";
+    std::cout << "Nhap ten thi sinh can tim: ";
+    std::cin >> name;
 
-    // THÔNG BÁO TẠM THỜI:
-    std::cout << "\n[!] Thong bao tu he thong: Chuc nang 'Tra cuu theo Ten tren Bang bam'\n";
-    std::cout << "    dang duoc thanh vien [Tran Nhat Anh] hoan thien theo huong dan trong CandidateManager.cpp.\n";
+    hashTable.searchByName(name);
 }
 
 bool CandidateManager::deleteCandidate() {
-    // ------------------------------------------------------------------------
-    // KHAI BÁO CÁC BIẾN VÀ CON TRỎ CẦN THIẾT (ĐÃ THIẾT KẾ SẴN CHO NHẬT ANH):
-    // ------------------------------------------------------------------------
     std::string sbd;
     Node* pTarget = nullptr;
 
-    // ------------------------------------------------------------------------
-    // HƯỚNG DẪN THỰC HIỆN TỪNG BƯỚC CHO TRẦN NHẬT ANH:
-    // ------------------------------------------------------------------------
-    // BƯỚC 1: Nhập SBD của thí sinh cần xóa:
-    //         std::cout << "\n--- XOA THI SINH KHOI HE THONG ---\n";
-    //         std::cout << "Nhap SBD thi sinh can xoa: ";
-    //         std::cin >> sbd;
-    //
-    // BƯỚC 2: Tìm nút cần xóa để lấy chữ cái đầu của tên (phục vụ xóa trên Bảng băm):
-    //         pTarget = candidateList.find(sbd);
-    //         if (pTarget == nullptr) {
-    //             std::cout << "[!] Khong tim thay thi sinh co SBD: " << sbd << "\n";
-    //             return false;
-    //         }
-    //         char firstLetter = pTarget->data.getFirstLetterOfName();
-    //
-    // BƯỚC 3: Gọi hàm xóa trên cả Danh sách liên kết và Bảng băm:
-    //         candidateList.remove(sbd);
-    //         hashTable.remove(sbd, firstLetter);
-    //         std::cout << "[+] Da xoa thanh cong thi sinh " << sbd << " khoi he thong!\n";
-    //         return true;
-    // ------------------------------------------------------------------------
+    std::cout << "\n--- XOA THI SINH KHOI HE THONG ---\n";
+    std::cout << "Nhap SBD thi sinh can xoa: ";
+    std::cin >> sbd;
 
-    // THÔNG BÁO TẠM THỜI:
-    std::cout << "\n[!] Thong bao tu he thong: Chuc nang 'Xoa thi sinh theo SBD'\n";
-    std::cout << "    dang duoc thanh vien [Tran Nhat Anh] hoan thien theo huong dan trong CandidateManager.cpp.\n";
+    pTarget = candidateList.find(sbd);
 
-    return false;
+    if (pTarget == nullptr) {
+        std::cout << "Khong tim thay thi sinh co SBD: " << sbd << "\n";
+        return false;
+    }
+
+    char firstLetter = pTarget->data.getFirstLetterOfName();
+
+    candidateList.remove(sbd);
+    hashTable.remove(sbd, firstLetter);
+
+    std::cout << "Da xoa thi sinh " << sbd << " thanh cong!\n";
+
+    return true;
 }
+   
 
 // ============================================================================
 // PHẦN VIỆC CỦA TRƯỞNG NHÓM: NGUYỄN BÁ LINH
