@@ -141,7 +141,6 @@ bool CandidateManager::updateCandidate() {
     return false;
 }
 
-
 void CandidateManager::searchBySBD() {
     std::string sbd;
     Node* result = nullptr;
