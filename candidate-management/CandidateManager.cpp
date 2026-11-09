@@ -4,6 +4,17 @@
 #include "Utils.h"
 #include <iostream>
 #include <limits>
+#include <string>
+
+namespace {
+std::string trim(const std::string &s) {
+    const char *ws = " \t\r\n";
+    std::size_t start = s.find_first_not_of(ws);
+    if (start == std::string::npos) return "";
+    std::size_t end = s.find_last_not_of(ws);
+    return s.substr(start, end - start + 1);
+}
+} // namespace
 
 // ============================================================================
 // DỰ ÁN CTDL&GT: ĐỀ TÀI SỐ 8 - QUẢN LÝ DANH SÁCH THÍ SINH
@@ -273,9 +284,20 @@ void CandidateManager::allocateExamRooms() {
 void CandidateManager::loadData() {
     std::string filename;
     std::cout << "Nhap ten file can doc (mac dinh: input.txt): ";
-    std::cin >> filename;
+    std::getline(std::cin, filename);
+    filename = trim(filename);
     if (filename.empty()) filename = "input.txt";
-    Utils::loadFromFile(filename, candidateList, hashTable);
+
+    // Xóa dữ liệu cũ trước khi nạp, tránh tình trạng đọc lại thành 30 -> 60 -> 90
+    candidateList.clear();
+    hashTable.clear();
+
+    if (!Utils::loadFromFile(filename, candidateList, hashTable)) {
+        std::cout << "[!] Khong nap duoc du lieu. Danh sach da du xoa trong.\\n";
+        return;
+    }
+    std::cout << "[+] Da thay the danh sach bang " << candidateList.getCount()
+              << " thi sinh tu file " << filename << ".\n";
 }
 
 void CandidateManager::saveData() {

@@ -19,10 +19,6 @@ void RoomAllocator::allocateRooms(const LinkedList &list, const HashTable &table
     }
 
     // BƯỚC 2: Khởi tạo danh sách các phòng thi
-    int totalCandidates = list.getCount();
-    Node* p = nullptr;
-    int currentRoom = 0;
-
     std::vector<LinkedList> rooms(numRooms);
 
     // BƯỚC 3: Duyệt qua từng bucket của HashTable
