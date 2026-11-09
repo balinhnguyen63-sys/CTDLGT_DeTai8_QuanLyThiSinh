@@ -14,6 +14,14 @@ std::string trim(const std::string &s) {
     std::size_t end = s.find_last_not_of(ws);
     return s.substr(start, end - start + 1);
 }
+
+std::string toLowerAscii(const std::string &s) {
+    std::string result = s;
+    for (char &c : result) {
+        c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+    }
+    return result;
+}
 } // namespace
 
 // ============================================================================
@@ -63,36 +71,41 @@ void CandidateManager::initSampleData() {
 // ============================================================================
 
 bool CandidateManager::addCandidate() {
-    
     std::string sbd, hoTen, gioiTinh, ngaySinh, queQuan;
     Node* pCheck = nullptr;
-
-
-    std::string sbd, hoTen, gioiTinh, ngaySinh, queQuan;
-    Node* pCheck = nullptr;
-
 
     std::cout << "\n--- THEM THI SINH MOI ---\n";
     std::cout << "Nhap Ma Du Thi / SBD (vi du: TS099): ";
     std::cin >> sbd;
 
     pCheck = candidateList.find(sbd);
-
     if (pCheck != nullptr) {
         std::cout << "[!] Loi: Ma du thi " << sbd
                   << " da ton tai trong he thong!\n";
         return false;
     }
+    if (hashTable.searchBySBD(sbd) != nullptr) {
+        std::cout << "[!] Loi: Ma du thi " << sbd
+                  << " da ton tai trong Bang bam!\n";
+        return false;
+    }
 
-    std::cin.ignore(
-        std::numeric_limits<std::streamsize>::max(), '\n'
-    );
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::cout << "Nhap Ho va Ten: ";
     std::getline(std::cin, hoTen);
+    if (hoTen.empty()) {
+        std::cout << "[!] Ho va Ten khong duoc de trong!\n";
+        return false;
+    }
 
     std::cout << "Nhap Gioi Tinh (Nam/Nu): ";
     std::getline(std::cin, gioiTinh);
+    std::string lowerGioiTinh = toLowerAscii(gioiTinh);
+    if (lowerGioiTinh != "nam" && lowerGioiTinh != "nu") {
+        std::cout << "[!] Gioi tinh khong hop le (chi nhan Nam hoac Nu)!\n";
+        return false;
+    }
 
     std::cout << "Nhap Ngay Sinh (dd/mm/yyyy): ";
     std::getline(std::cin, ngaySinh);
@@ -101,7 +114,6 @@ bool CandidateManager::addCandidate() {
     std::getline(std::cin, queQuan);
 
     Candidate newCandidate(sbd, hoTen, gioiTinh, ngaySinh, queQuan);
-
     candidateList.insertTail(newCandidate);
     hashTable.insert(newCandidate);
 
@@ -113,11 +125,6 @@ bool CandidateManager::addCandidate() {
 
 bool CandidateManager::updateCandidate() {
 
-    std::string sbd;
-    std::string newHoTen, newGioiTinh, newNgaySinh, newQueQuan;
-    Node* pTarget = nullptr;
-
-  
     std::string sbd;
     std::string newHoTen, newGioiTinh, newNgaySinh, newQueQuan;
     Node* pTarget = nullptr;
@@ -137,9 +144,7 @@ bool CandidateManager::updateCandidate() {
     std::cout << "\nThong tin hien tai cua thi sinh:\n";
     pTarget->data.displayRow();
 
-    std::cin.ignore(
-        std::numeric_limits<std::streamsize>::max(), '\n'
-    );
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::cout << "\nNhap Ho Ten moi (de trong neu giu nguyen): ";
     std::getline(std::cin, newHoTen);
@@ -153,11 +158,13 @@ bool CandidateManager::updateCandidate() {
     std::cout << "Nhap Que Quan moi: ";
     std::getline(std::cin, newQueQuan);
 
-    if (!newHoTen.empty()) {
-        pTarget->data.setHoTen(newHoTen);
-    }
-
+    // Validate du lieu moi truoc khi cap nhat
     if (!newGioiTinh.empty()) {
+        std::string lowerGioiTinh = toLowerAscii(newGioiTinh);
+        if (lowerGioiTinh != "nam" && lowerGioiTinh != "nu") {
+            std::cout << "[!] Gioi tinh khong hop le (chi nhan Nam hoac Nu)!\n";
+            return false;
+        }
         pTarget->data.setGioiTinh(newGioiTinh);
     }
 
@@ -169,11 +176,22 @@ bool CandidateManager::updateCandidate() {
         pTarget->data.setQueQuan(newQueQuan);
     }
 
-    // Display success message
+    // Cap nhat ho ten va dong bo HashTable (neu doi ten, bucket bam co the thay doi)
+    if (!newHoTen.empty()) {
+        // Luu chu cai dau CU (trước khi doi ten) de xoa buoc cu trong HashTable
+        char oldFirstLetter = pTarget->data.getFirstLetterOfName();
+        std::string oldHoTen = pTarget->data.getHoTen();
+        pTarget->data.setHoTen(newHoTen);
+
+        // Xoa ban cu tai bucket cu
+        hashTable.remove(sbd, oldFirstLetter);
+        // Chua lai ban moi (se duoc chen vao bucket dung theo ten moi)
+        hashTable.insert(pTarget->data);
+    }
+
     std::cout << "\n[+] Cap nhat thong tin thi sinh thanh cong!\n";
 
     return true;
-
 }
 
 void CandidateManager::searchBySBD() {
@@ -184,7 +202,11 @@ void CandidateManager::searchBySBD() {
     std::cout << "Nhap So Bao Danh: ";
     std::cin >> sbd;
 
-    result = candidateList.find(sbd);
+    // Tim trong Bang bam truoc, neu khong co tim trong Danh sach lien ket
+    result = hashTable.searchBySBD(sbd);
+    if (result == nullptr) {
+        result = candidateList.find(sbd);
+    }
 
     if (result != nullptr) {
         std::cout << "\n[+] Tim thay thi sinh:\n";
@@ -259,7 +281,13 @@ void CandidateManager::sortCandidates() {
 void CandidateManager::allocateExamRooms() {
     int numRooms;
     std::cout << "Nhap so luong phong thi can phan chia (n > 0): ";
-    std::cin >> numRooms;
+    if (!(std::cin >> numRooms) || numRooms <= 0 || numRooms > 10000) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "[!] So phong khong hop le! Vui long nhap so tu 1 den 10000.\n";
+        return;
+    }
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     RoomAllocator::allocateRooms(candidateList, hashTable, numRooms);
 }
 
@@ -275,7 +303,7 @@ void CandidateManager::loadData() {
     hashTable.clear();
 
     if (!Utils::loadFromFile(filename, candidateList, hashTable)) {
-        std::cout << "[!] Khong nap duoc du lieu. Danh sach da du xoa trong.\\n";
+        std::cout << "[!] Khong nap duoc du lieu. Danh sach da du xoa trong.\n";
         return;
     }
     std::cout << "[+] Da thay the danh sach bang " << candidateList.getCount()
@@ -285,7 +313,8 @@ void CandidateManager::loadData() {
 void CandidateManager::saveData() {
     std::string filename;
     std::cout << "Nhap ten file can luu (mac dinh: candidates_out.txt): ";
-    std::cin >> filename;
+    std::getline(std::cin, filename);
+    filename = trim(filename);
     if (filename.empty()) filename = "candidates_out.txt";
     Utils::saveToFile(filename, candidateList);
 }
