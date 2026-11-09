@@ -52,9 +52,7 @@ void CandidateManager::initSampleData() {
 // ============================================================================
 
 bool CandidateManager::addCandidate() {
-    // ------------------------------------------------------------------------
-    // KHAI BÁO CÁC BIẾN VÀ CON TRỎ CẦN THIẾT (ĐÃ THIẾT KẾ SẴN CHO THẾ ANH):
-    // ------------------------------------------------------------------------
+    
     std::string sbd, hoTen, gioiTinh, ngaySinh, queQuan;
     Node* pCheck = nullptr;
 
@@ -62,12 +60,11 @@ bool CandidateManager::addCandidate() {
     std::string sbd, hoTen, gioiTinh, ngaySinh, queQuan;
     Node* pCheck = nullptr;
 
-    // buoc1
+
     std::cout << "\n--- THEM THI SINH MOI ---\n";
     std::cout << "Nhap Ma Du Thi / SBD (vi du: TS099): ";
     std::cin >> sbd;
 
-    // buoc2
     pCheck = candidateList.find(sbd);
 
     if (pCheck != nullptr) {
@@ -76,7 +73,6 @@ bool CandidateManager::addCandidate() {
         return false;
     }
 
-    // buoc3
     std::cin.ignore(
         std::numeric_limits<std::streamsize>::max(), '\n'
     );
@@ -93,13 +89,11 @@ bool CandidateManager::addCandidate() {
     std::cout << "Nhap Que Quan: ";
     std::getline(std::cin, queQuan);
 
-    // buoc4
     Candidate newCandidate(sbd, hoTen, gioiTinh, ngaySinh, queQuan);
 
     candidateList.insertTail(newCandidate);
     hashTable.insert(newCandidate);
 
-    // buoc5
     std::cout << "[+] Da them thi sinh " << hoTen
               << " (SBD: " << sbd << ") thanh cong!\n";
 
@@ -107,9 +101,7 @@ bool CandidateManager::addCandidate() {
 }
 
 bool CandidateManager::updateCandidate() {
-    // ------------------------------------------------------------------------
-    // KHAI BÁO CÁC BIẾN VÀ CON TRỎ CẦN THIẾT (ĐÃ THIẾT KẾ SẴN CHO THẾ ANH):
-    // ------------------------------------------------------------------------
+
     std::string sbd;
     std::string newHoTen, newGioiTinh, newNgaySinh, newQueQuan;
     Node* pTarget = nullptr;
@@ -119,12 +111,10 @@ bool CandidateManager::updateCandidate() {
     std::string newHoTen, newGioiTinh, newNgaySinh, newQueQuan;
     Node* pTarget = nullptr;
 
-    // buoc1
     std::cout << "\n--- CAP NHAT THONG TIN THI SINH ---\n";
     std::cout << "Nhap SBD thi sinh can cap nhat: ";
     std::cin >> sbd;
 
-    // buoc2
     pTarget = candidateList.find(sbd);
 
     if (pTarget == nullptr) {
@@ -133,11 +123,9 @@ bool CandidateManager::updateCandidate() {
         return false;
     }
 
-    // buoc3
     std::cout << "\nThong tin hien tai cua thi sinh:\n";
     pTarget->data.displayRow();
 
-    // buoc4
     std::cin.ignore(
         std::numeric_limits<std::streamsize>::max(), '\n'
     );
@@ -154,7 +142,6 @@ bool CandidateManager::updateCandidate() {
     std::cout << "Nhap Que Quan moi: ";
     std::getline(std::cin, newQueQuan);
 
-    // buoc5
     if (!newHoTen.empty()) {
         pTarget->data.setHoTen(newHoTen);
     }
