@@ -161,15 +161,19 @@ void CandidateManager::searchBySBD() {
 }
    
 
+
 void CandidateManager::searchByName() {
     std::string name;
 
     std::cout << "\n--- TRA CUU THI SINH THEO TEN ---\n";
     std::cout << "Nhap ten thi sinh can tim: ";
-    std::cin >> name;
+
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::getline(std::cin, name);
 
     hashTable.searchByName(name);
 }
+
 
 bool CandidateManager::deleteCandidate() {
     std::string sbd;
