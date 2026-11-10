@@ -101,61 +101,62 @@ void CandidateManager::initSampleData() {
 
 bool CandidateManager::addCandidate() {
     std::string sbd, hoTen, gioiTinh, ngaySinh, queQuan;
-    Node* pCheck = nullptr;
 
     std::cout << "\n--- THEM THI SINH MOI ---\n";
     std::cout << "Nhap Ma Du Thi / SBD (vi du: TS099): ";
     std::cin >> sbd;
     sbd = trim(sbd);
 
-    if (sbd.empty()) {
-        std::cout << "[!] Ma du thi khong duoc de trong!\n";
-        return false;
-    }
-
-    pCheck = candidateList.find(sbd);
-    if (pCheck != nullptr) {
-        std::cout << "[!] Loi: Ma du thi " << sbd
-                  << " da ton tai trong he thong!\n";
-        return false;
-    }
-    if (hashTable.searchBySBD(sbd) != nullptr) {
-        std::cout << "[!] Loi: Ma du thi " << sbd
-                  << " da ton tai trong Bang bam!\n";
-        return false;
-    }
-
+    // Doc HET cac truong truoc khi kiem tra. Neu thoat som ngay sau khi nhap SBD
+    // thi phan con lai cua dong nhap (khi chay bang file/pipe) se bi vong lap menu
+    // doc nham thanh lua chon.
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::cout << "Nhap Ho va Ten: ";
     std::getline(std::cin, hoTen);
     hoTen = trim(hoTen);
+
+    std::cout << "Nhap Gioi Tinh (Nam/Nu): ";
+    std::getline(std::cin, gioiTinh);
+
+    std::cout << "Nhap Ngay Sinh (dd/mm/yyyy): ";
+    std::getline(std::cin, ngaySinh);
+    ngaySinh = trim(ngaySinh);
+
+    std::cout << "Nhap Que Quan: ";
+    std::getline(std::cin, queQuan);
+    queQuan = trim(queQuan);
+
+    if (sbd.empty()) {
+        std::cout << "[!] Ma du thi khong duoc de trong!\n";
+        return false;
+    }
+
+    if (candidateList.find(sbd) != nullptr ||
+        hashTable.searchBySBD(sbd) != nullptr) {
+        std::cout << "[!] Loi: Ma du thi " << sbd
+                  << " da ton tai trong he thong!\n";
+        return false;
+    }
+
     if (hoTen.empty()) {
         std::cout << "[!] Ho va Ten khong duoc de trong!\n";
         return false;
     }
 
-    std::cout << "Nhap Gioi Tinh (Nam/Nu): ";
-    std::getline(std::cin, gioiTinh);
     std::string gioiTinhChuan = normalizeGender(gioiTinh);
     if (gioiTinhChuan.empty()) {
         std::cout << "[!] Gioi tinh khong hop le (chi nhan Nam hoac Nu)!\n";
         return false;
     }
 
-    std::cout << "Nhap Ngay Sinh (dd/mm/yyyy): ";
-    std::getline(std::cin, ngaySinh);
-    ngaySinh = trim(ngaySinh);
     if (!isValidDate(ngaySinh)) {
         std::cout << "[!] Ngay sinh khong hop le (dinh dang dd/mm/yyyy)!\n";
         return false;
     }
 
-    std::cout << "Nhap Que Quan: ";
-    std::getline(std::cin, queQuan);
-    queQuan = trim(queQuan);
-
     Candidate newCandidate(sbd, hoTen, gioiTinhChuan, ngaySinh, queQuan);
+
     candidateList.insertTail(newCandidate);
     hashTable.insert(newCandidate);
 
@@ -174,6 +175,7 @@ bool CandidateManager::updateCandidate() {
     std::cout << "\n--- CAP NHAT THONG TIN THI SINH ---\n";
     std::cout << "Nhap SBD thi sinh can cap nhat: ";
     std::cin >> sbd;
+    sbd = trim(sbd);
 
     pTarget = candidateList.find(sbd);
 
@@ -244,6 +246,7 @@ void CandidateManager::searchBySBD() {
     std::cout << "\n--- TRA CUU THI SINH THEO SO BAO DANH ---\n";
     std::cout << "Nhap So Bao Danh: ";
     std::cin >> sbd;
+    sbd = trim(sbd);
 
     // Tim trong Bang bam truoc, neu khong co tim trong Danh sach lien ket
     result = hashTable.searchBySBD(sbd);
@@ -282,6 +285,7 @@ bool CandidateManager::deleteCandidate() {
     std::cout << "\n--- XOA THI SINH KHOI HE THONG ---\n";
     std::cout << "Nhap SBD thi sinh can xoa: ";
     std::cin >> sbd;
+    sbd = trim(sbd);
 
     pTarget = candidateList.find(sbd);
 
@@ -398,6 +402,10 @@ void CandidateManager::run() {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "[!] Lua chon khong hop le! Vui long nhap so tu 0 den 11.\n";
+            // Tu C++11, khi trich xuat that bai thi 'choice' bi gan = 0.
+            // Neu khong gan lai -1 thi vong lap while(choice != 0) se ket thuc
+            // ngay sau lan nhap sai dau tien.
+            choice = -1;
             continue;
         }
 

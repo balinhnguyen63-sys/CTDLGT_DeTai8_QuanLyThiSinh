@@ -117,24 +117,27 @@ bool Utils::loadFromFile(const std::string &filename, LinkedList &list, HashTabl
             continue;
         }
  
-        validRows++;
- 
+        // Chi tinh la dong hop le khi khong bi trung SBD (truoc day dong bi trung
+        // van duoc tinh la hop le nen ham tra ve true du khong nap duoc thi sinh nao,
+        // khien CandidateManager::loadData thay danh sach hien tai bang danh sach rong).
         if (list.find(sbd) != nullptr) {
             std::cout << "[!] Bo qua SBD trung: " << sbd << "\n";
             duplicateCount++;
             continue;
         }
- 
+
+        validRows++;
+
         Candidate c(sbd, hoTen, gioiTinh, ngaySinh, queQuan);
- 
+
         list.insertTail(c);
         table.insert(c);
         loadedCount++;
     }
- 
+
     inFile.close();
- 
-    if (validRows == 0) {
+
+    if (loadedCount == 0 || validRows == 0) {
         std::cout << "[!] File " << filename << " khong co ban ghi hop le nao.\n";
         return false;
     }
