@@ -2,6 +2,7 @@
 #include "Sorter.h"
 #include "RoomAllocator.h"
 #include "Utils.h"
+#include <cctype>
 #include <iostream>
 #include <limits>
 #include <string>
@@ -15,12 +16,40 @@ std::string trim(const std::string &s) {
     return s.substr(start, end - start + 1);
 }
 
-std::string toLowerAscii(const std::string &s) {
-    std::string result = s;
-    for (char &c : result) {
-        c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+// Chuẩn hóa giới tính: chấp nhận Nam/Nữ/Nu (kể cả chữ có dấu UTF-8).
+// Bỏ các byte không phải ASCII nên "Nữ"/"nữ" đều thành "nu".
+std::string normalizeGender(const std::string &raw) {
+    std::string ascii;
+    for (unsigned char c : raw) {
+        if (c < 0x80) {
+            ascii += static_cast<char>(std::tolower(c));
+        }
     }
-    return result;
+    ascii = trim(ascii);
+    if (ascii == "nam") return "Nam";
+    if (ascii == "nu") return "Nu";
+    return "";
+}
+
+// Kiểm tra ngày sinh đúng định dạng dd/mm/yyyy và có thật trên lịch.
+bool isValidDate(const std::string &s) {
+    if (s.size() != 10 || s[2] != '/' || s[5] != '/') return false;
+    for (std::size_t i = 0; i < s.size(); ++i) {
+        if (i == 2 || i == 5) continue;
+        if (!std::isdigit(static_cast<unsigned char>(s[i]))) return false;
+    }
+
+    int day = std::stoi(s.substr(0, 2));
+    int month = std::stoi(s.substr(3, 2));
+    int year = std::stoi(s.substr(6, 4));
+    if (year < 1900 || year > 2100 || month < 1 || month > 12) return false;
+
+    static const int daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    int maxDay = daysInMonth[month - 1];
+    bool leapYear = (year % 400 == 0) || (year % 4 == 0 && year % 100 != 0);
+    if (month == 2 && leapYear) maxDay = 29;
+
+    return day >= 1 && day <= maxDay;
 }
 } // namespace
 
@@ -77,6 +106,12 @@ bool CandidateManager::addCandidate() {
     std::cout << "\n--- THEM THI SINH MOI ---\n";
     std::cout << "Nhap Ma Du Thi / SBD (vi du: TS099): ";
     std::cin >> sbd;
+    sbd = trim(sbd);
+
+    if (sbd.empty()) {
+        std::cout << "[!] Ma du thi khong duoc de trong!\n";
+        return false;
+    }
 
     pCheck = candidateList.find(sbd);
     if (pCheck != nullptr) {
@@ -94,6 +129,7 @@ bool CandidateManager::addCandidate() {
 
     std::cout << "Nhap Ho va Ten: ";
     std::getline(std::cin, hoTen);
+    hoTen = trim(hoTen);
     if (hoTen.empty()) {
         std::cout << "[!] Ho va Ten khong duoc de trong!\n";
         return false;
@@ -101,19 +137,25 @@ bool CandidateManager::addCandidate() {
 
     std::cout << "Nhap Gioi Tinh (Nam/Nu): ";
     std::getline(std::cin, gioiTinh);
-    std::string lowerGioiTinh = toLowerAscii(gioiTinh);
-    if (lowerGioiTinh != "nam" && lowerGioiTinh != "nu") {
+    std::string gioiTinhChuan = normalizeGender(gioiTinh);
+    if (gioiTinhChuan.empty()) {
         std::cout << "[!] Gioi tinh khong hop le (chi nhan Nam hoac Nu)!\n";
         return false;
     }
 
     std::cout << "Nhap Ngay Sinh (dd/mm/yyyy): ";
     std::getline(std::cin, ngaySinh);
+    ngaySinh = trim(ngaySinh);
+    if (!isValidDate(ngaySinh)) {
+        std::cout << "[!] Ngay sinh khong hop le (dinh dang dd/mm/yyyy)!\n";
+        return false;
+    }
 
     std::cout << "Nhap Que Quan: ";
     std::getline(std::cin, queQuan);
+    queQuan = trim(queQuan);
 
-    Candidate newCandidate(sbd, hoTen, gioiTinh, ngaySinh, queQuan);
+    Candidate newCandidate(sbd, hoTen, gioiTinhChuan, ngaySinh, queQuan);
     candidateList.insertTail(newCandidate);
     hashTable.insert(newCandidate);
 
@@ -148,46 +190,47 @@ bool CandidateManager::updateCandidate() {
 
     std::cout << "\nNhap Ho Ten moi (de trong neu giu nguyen): ";
     std::getline(std::cin, newHoTen);
+    newHoTen = trim(newHoTen);
 
-    std::cout << "Nhap Gioi Tinh moi: ";
+    std::cout << "Nhap Gioi Tinh moi (de trong neu giu nguyen): ";
     std::getline(std::cin, newGioiTinh);
+    newGioiTinh = trim(newGioiTinh);
 
-    std::cout << "Nhap Ngay Sinh moi: ";
+    std::cout << "Nhap Ngay Sinh moi (dd/mm/yyyy, de trong neu giu nguyen): ";
     std::getline(std::cin, newNgaySinh);
+    newNgaySinh = trim(newNgaySinh);
 
-    std::cout << "Nhap Que Quan moi: ";
+    std::cout << "Nhap Que Quan moi (de trong neu giu nguyen): ";
     std::getline(std::cin, newQueQuan);
+    newQueQuan = trim(newQueQuan);
 
-    // Validate du lieu moi truoc khi cap nhat
+    // Kiem tra TAT CA du lieu moi truoc khi ghi de (tranh sua nua chung)
+    std::string gioiTinhChuan;
     if (!newGioiTinh.empty()) {
-        std::string lowerGioiTinh = toLowerAscii(newGioiTinh);
-        if (lowerGioiTinh != "nam" && lowerGioiTinh != "nu") {
+        gioiTinhChuan = normalizeGender(newGioiTinh);
+        if (gioiTinhChuan.empty()) {
             std::cout << "[!] Gioi tinh khong hop le (chi nhan Nam hoac Nu)!\n";
             return false;
         }
-        pTarget->data.setGioiTinh(newGioiTinh);
     }
 
-    if (!newNgaySinh.empty()) {
-        pTarget->data.setNgaySinh(newNgaySinh);
+    if (!newNgaySinh.empty() && !isValidDate(newNgaySinh)) {
+        std::cout << "[!] Ngay sinh khong hop le (dinh dang dd/mm/yyyy)!\n";
+        return false;
     }
 
-    if (!newQueQuan.empty()) {
-        pTarget->data.setQueQuan(newQueQuan);
-    }
+    // Luu chu cai dau CU (truoc khi doi ten) de xoa dung bucket trong HashTable
+    char oldFirstLetter = pTarget->data.getFirstLetterOfName();
 
-    // Cap nhat ho ten va dong bo HashTable (neu doi ten, bucket bam co the thay doi)
-    if (!newHoTen.empty()) {
-        // Luu chu cai dau CU (trước khi doi ten) de xoa buoc cu trong HashTable
-        char oldFirstLetter = pTarget->data.getFirstLetterOfName();
-        std::string oldHoTen = pTarget->data.getHoTen();
-        pTarget->data.setHoTen(newHoTen);
+    if (!newHoTen.empty()) pTarget->data.setHoTen(newHoTen);
+    if (!gioiTinhChuan.empty()) pTarget->data.setGioiTinh(gioiTinhChuan);
+    if (!newNgaySinh.empty()) pTarget->data.setNgaySinh(newNgaySinh);
+    if (!newQueQuan.empty()) pTarget->data.setQueQuan(newQueQuan);
 
-        // Xoa ban cu tai bucket cu
-        hashTable.remove(sbd, oldFirstLetter);
-        // Chua lai ban moi (se duoc chen vao bucket dung theo ten moi)
-        hashTable.insert(pTarget->data);
-    }
+    // HashTable luu BAN SAO cua Candidate, nen sau BAT KY thay doi nao
+    // (ten, gioi tinh, ngay sinh, que quan) deu phai xoa ban cu va chen ban moi.
+    hashTable.remove(sbd, oldFirstLetter);
+    hashTable.insert(pTarget->data);
 
     std::cout << "\n[+] Cap nhat thong tin thi sinh thanh cong!\n";
 
@@ -225,7 +268,7 @@ void CandidateManager::searchByName() {
     std::cout << "\n--- TRA CUU THI SINH THEO TEN ---\n";
     std::cout << "Nhap ten thi sinh can tim: ";
 
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    // run() da bo newline sau lua chon menu, nen doc thang ca dong ten
     std::getline(std::cin, name);
 
     hashTable.searchByName(name);
@@ -276,6 +319,7 @@ void CandidateManager::displayHashTable() const {
 
 void CandidateManager::sortCandidates() {
     Sorter::sortByNameAZ(candidateList);
+    Sorter::sortBuckets(hashTable);
 }
 
 void CandidateManager::allocateExamRooms() {
@@ -298,14 +342,19 @@ void CandidateManager::loadData() {
     filename = trim(filename);
     if (filename.empty()) filename = "input.txt";
 
-    // Xóa dữ liệu cũ trước khi nạp, tránh tình trạng đọc lại thành 30 -> 60 -> 90
-    candidateList.clear();
-    hashTable.clear();
+    // Nạp vào vùng tạm trước: nếu file lỗi thì giữ nguyên dữ liệu đang có,
+    // nếu thành công mới thay thế (tránh cộng dồn 30 -> 60 -> 90 và tránh mất dữ liệu).
+    LinkedList newList;
+    HashTable newTable;
 
-    if (!Utils::loadFromFile(filename, candidateList, hashTable)) {
-        std::cout << "[!] Khong nap duoc du lieu. Danh sach da du xoa trong.\n";
+    if (!Utils::loadFromFile(filename, newList, newTable)) {
+        std::cout << "[!] Khong nap duoc du lieu. Danh sach cu duoc giu nguyen.\n";
         return;
     }
+
+    candidateList = newList;
+    hashTable = newTable;
+
     std::cout << "[+] Da thay the danh sach bang " << candidateList.getCount()
               << " thi sinh tu file " << filename << ".\n";
 }
@@ -351,6 +400,10 @@ void CandidateManager::run() {
             std::cout << "[!] Lua chon khong hop le! Vui long nhap so tu 0 den 11.\n";
             continue;
         }
+
+        // Bỏ ký tự newline còn lại sau khi nhập số, để các hàm dùng getline
+        // (đọc/ghi file) nhận đúng đường dẫn người dùng nhập.
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         switch (choice) {
             case 1:

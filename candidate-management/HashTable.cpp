@@ -95,44 +95,55 @@ void HashTable::searchByName(const std::string &name) const {
         return;
     }
 
-    // Nếu là họ tên đầy đủ, băm theo chữ cái đầu của "Tên" (từ cuối cùng)
-    std::string probeName = query;
-    std::size_t lastSpace = query.find_last_of(" \t");
-    if (lastSpace != std::string::npos) {
-        probeName = query.substr(lastSpace + 1);
-    }
-    Candidate probe("", probeName, "", "", "");
-    int index = hashFunction(probe.getFirstLetterOfName());
-
     std::string lowerQuery = toLowerAscii(query);
-    bool isFullName = (lastSpace != std::string::npos);
+    bool isFullName = (query.find(' ') != std::string::npos);
 
-    std::cout << "\n=== KET QUA TRA CUU THEO TEN: \"" << query
-              << "\" (Tra cuu tai Nhom '" << static_cast<char>('A' + index) << "') ===\n";
+    // Họ tên đầy đủ: băm theo chữ cái đầu của "Tên" (từ cuối) -> chỉ tra 1 bucket.
+    // Một từ: có thể là Tên hoặc một từ trong Họ -> phải quét cả 26 nhóm.
+    int startBucket = 0;
+    int endBucket = TABLE_SIZE - 1;
+    if (isFullName) {
+        std::size_t lastSpace = query.find_last_of(' ');
+        std::string ten = query.substr(lastSpace + 1);
+        Candidate probe("", ten, "", "", "");
+        startBucket = hashFunction(probe.getFirstLetterOfName());
+        endBucket = startBucket;
+    }
 
-    Node* p = buckets[index].getHead();
+    std::cout << "\n=== KET QUA TRA CUU THEO TEN: \"" << query << "\"";
+    if (isFullName) {
+        std::cout << " (Tra cuu tai Nhom '"
+                  << static_cast<char>('A' + startBucket) << "')";
+    } else {
+        std::cout << " (Quet toan bo 26 nhom)";
+    }
+    std::cout << " ===\n";
+
     int count = 0;
-    while (p != nullptr) {
-        std::string firstName = toLowerAscii(trim(p->data.getFirstName()));
-        std::string fullName = toLowerAscii(normalizeSpaces(p->data.getHoTen()));
+    for (int i = startBucket; i <= endBucket; ++i) {
+        Node* p = buckets[i].getHead();
+        while (p != nullptr) {
+            std::string firstName = toLowerAscii(trim(p->data.getFirstName()));
+            std::string fullName = toLowerAscii(normalizeSpaces(p->data.getHoTen()));
 
-        bool match = false;
-        if (isFullName) {
-            match = fullName.find(lowerQuery) != std::string::npos;
-        } else {
-            match = (firstName == lowerQuery) || containsWord(fullName, lowerQuery);
-        }
-
-        if (match) {
-            if (count == 0) {
-                std::cout << "+---------+-----------------------+---------+-------------+----------------------+\n";
-                std::cout << "| SBD     | Ho va Ten             | Phai    | Ngay Sinh   | Que Quan             |\n";
-                std::cout << "+---------+-----------------------+---------+-------------+----------------------+\n";
+            bool match = false;
+            if (isFullName) {
+                match = fullName.find(lowerQuery) != std::string::npos;
+            } else {
+                match = (firstName == lowerQuery) || containsWord(fullName, lowerQuery);
             }
-            p->data.displayRow();
-            count++;
+
+            if (match) {
+                if (count == 0) {
+                    std::cout << "+---------+-----------------------+---------+-------------+----------------------+\n";
+                    std::cout << "| SBD     | Ho va Ten             | Phai    | Ngay Sinh   | Que Quan             |\n";
+                    std::cout << "+---------+-----------------------+---------+-------------+----------------------+\n";
+                }
+                p->data.displayRow();
+                count++;
+            }
+            p = p->next;
         }
-        p = p->next;
     }
 
     if (count == 0) {
@@ -143,10 +154,18 @@ void HashTable::searchByName(const std::string &name) const {
     }
 }
 
-// Xóa thí sinh khỏi bảng băm
+// Xóa thí sinh khỏi bảng băm.
+// Tham số firstLetter giúp xóa nhanh đúng bucket; nếu caller truyền sai chữ cái
+// thì tự động quét toàn bảng để tránh bỏ sót (list và hash không bị lệch).
 bool HashTable::remove(const std::string &sbd, char firstLetter) {
     int index = hashFunction(firstLetter);
-    return buckets[index].remove(sbd);
+    if (buckets[index].remove(sbd)) return true;
+
+    for (int i = 0; i < TABLE_SIZE; ++i) {
+        if (i == index) continue;
+        if (buckets[i].remove(sbd)) return true;
+    }
+    return false;
 }
 
 // Hiển thị toàn bộ bảng băm theo từng nhóm chữ cái A-Z
@@ -180,6 +199,13 @@ void HashTable::displayBucket(int index) const {
 }
 
 const LinkedList& HashTable::getBucket(int index) const {
+    if (index < 0 || index >= TABLE_SIZE) {
+        throw std::out_of_range("HashTable::getBucket: chi so bucket khong hop le");
+    }
+    return buckets[index];
+}
+
+LinkedList& HashTable::getBucket(int index) {
     if (index < 0 || index >= TABLE_SIZE) {
         throw std::out_of_range("HashTable::getBucket: chi so bucket khong hop le");
     }

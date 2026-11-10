@@ -43,6 +43,9 @@ public:
     // Lấy tham chiếu đến một bucket (phục vụ phân phòng thi)
     const LinkedList& getBucket(int index) const;
 
+    // Lấy tham chiếu có thể thay đổi đến một bucket (phục vụ sắp xếp bucket)
+    LinkedList& getBucket(int index);
+
     // Xóa toàn bộ dữ liệu bảng băm
     void clear();
 };

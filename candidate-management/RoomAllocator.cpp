@@ -2,12 +2,13 @@
 #include <iostream>
 #include <vector>
 
-void RoomAllocator::allocateRooms(const LinkedList &list, const HashTable &table, int numRooms) {
+void RoomAllocator::allocateRooms(const LinkedList &list,
+                                  const HashTable &table,
+                                  int numRooms) {
 
+    // BƯỚC 1: Kiểm tra dữ liệu đầu vào
     int totalCandidates = list.getCount();
-    Node* p = nullptr;
-    int currentRoom = 0; // Chỉ số phòng xoay vòng (Round-Robin: 0 -> numRooms - 1)
- // BƯỚC 1: Kiểm tra điều kiện đầu vào
+
     if (numRooms <= 0) {
         std::cout << "[!] So phong thi phai lon hon 0!\n";
         return;
@@ -18,29 +19,31 @@ void RoomAllocator::allocateRooms(const LinkedList &list, const HashTable &table
         return;
     }
 
-    // BƯỚC 2: Khởi tạo danh sách các phòng thi
-    std::vector<LinkedList> rooms(numRooms);
-
-    // BƯỚC 3: Duyệt qua từng bucket của HashTable
-    for (int i = 0; i < HashTable::TABLE_SIZE; ++i) {
-
-        const LinkedList& bucket = table.getBucket(i);
-
-        p = bucket.getHead();
-
-        while (p != nullptr) {
-
-            // Đưa thí sinh vào phòng hiện tại
-            rooms[currentRoom].insertTail(p->data);
-
-            // Chuyển sang phòng tiếp theo theo Round-Robin
-            currentRoom = (currentRoom + 1) % numRooms;
-
-            p = p->next;
-        }
+    if (numRooms > totalCandidates) {
+        std::cout << "[!] So phong khong duoc lon hon so thi sinh!\n";
+        return;
     }
 
-    // BƯỚC 4: In kết quả phân phòng
+    // BƯỚC 2: Khởi tạo danh sách phòng
+    std::vector<LinkedList> rooms(numRooms);
+
+    int currentRoom = 0;
+
+    // BƯỚC 3: Lấy dữ liệu trực tiếp từ LinkedList
+    Node* p = list.getHead();
+
+    while (p != nullptr) {
+
+        // Thêm thí sinh vào phòng hiện tại
+        rooms[currentRoom].insertTail(p->data);
+
+        // Chuyển sang phòng tiếp theo
+        currentRoom = (currentRoom + 1) % numRooms;
+
+        p = p->next;
+    }
+
+    // BƯỚC 4: In kết quả
     std::cout << "\n========== KET QUA PHAN PHONG THI ==========\n";
     std::cout << "Tong so thi sinh: " << totalCandidates << "\n";
     std::cout << "Tong so phong thi: " << numRooms << "\n";
@@ -48,7 +51,7 @@ void RoomAllocator::allocateRooms(const LinkedList &list, const HashTable &table
     for (int r = 0; r < numRooms; ++r) {
 
         std::cout << "\n========== PHONG THI SO "
-                  << (r + 1) << " ==========\n";
+                  << r + 1 << " ==========\n";
 
         rooms[r].display();
     }

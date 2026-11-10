@@ -5,7 +5,7 @@
 // DỰ ÁN CTDL&GT: ĐỀ TÀI SỐ 8 - QUẢN LÝ DANH SÁCH THÍ SINH
 // GIẢNG VIÊN HƯỚNG DẪN: ThS. BÙI VĂN THƯỢNG - LỚP: 012012400212 - NHÓM 4
 // PHỤ TRÁCH THỰC HIỆN: NGUYỄN HỮU CƯỜNG
-// NHIỆM VỤ: Sắp xếp DSLK theo Tên tăng dần A-Z bằng Merge Sort (stable)
+// NHIỆM VỤ: Sắp xếp DSLK và các bucket của HashTable theo Tên A-Z bằng Merge Sort (stable)
 // ============================================================================
 
 // Trả về true nếu thí sinh x phải đứng TRƯỚC thí sinh y MỘT CÁCH CHẶT CHẼ
@@ -56,8 +56,19 @@ void Sorter::sortByNameAZ(LinkedList &list) {
         return;
     }
 
-    list.setHead(mergeSort(head));       // gắn lại đầu danh sách sau khi sắp xếp
+    list.setHead(mergeSort(head));       // gắn lại đầu danh sách (setHead tự cập nhật tail, count)
 
     std::cout << "\n[+] Da sap xep danh sach thi sinh theo Thu tu Ten tang dan (A-Z) thanh cong!\n";
     list.display();
+}
+
+// Sắp xếp từng bucket của bảng băm (mỗi bucket là 1 DSLK riêng)
+void Sorter::sortBuckets(HashTable &table) {
+    for (int i = 0; i < HashTable::TABLE_SIZE; ++i) {
+        LinkedList &bucket = table.getBucket(i);
+        if (bucket.getHead() != nullptr && bucket.getHead()->next != nullptr) {
+            bucket.setHead(mergeSort(bucket.getHead()));
+        }
+    }
+    std::cout << "[+] Da sap xep cac bucket cua Bang bam theo Ten tang dan (A-Z) thanh cong!\n";
 }
