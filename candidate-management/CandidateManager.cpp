@@ -16,8 +16,6 @@ std::string trim(const std::string &s) {
     return s.substr(start, end - start + 1);
 }
 
-// Chuẩn hóa giới tính: chấp nhận Nam/Nữ/Nu (kể cả chữ có dấu UTF-8).
-// Bỏ các byte không phải ASCII nên "Nữ"/"nữ" đều thành "nu".
 std::string normalizeGender(const std::string &raw) {
     std::string ascii;
     for (unsigned char c : raw) {
@@ -31,7 +29,6 @@ std::string normalizeGender(const std::string &raw) {
     return "";
 }
 
-// Kiểm tra ngày sinh đúng định dạng dd/mm/yyyy và có thật trên lịch.
 bool isValidDate(const std::string &s) {
     if (s.size() != 10 || s[2] != '/' || s[5] != '/') return false;
     for (std::size_t i = 0; i < s.size(); ++i) {
@@ -51,7 +48,7 @@ bool isValidDate(const std::string &s) {
 
     return day >= 1 && day <= maxDay;
 }
-} // namespace
+} 
 
 // ============================================================================
 // DỰ ÁN CTDL&GT: ĐỀ TÀI SỐ 8 - QUẢN LÝ DANH SÁCH THÍ SINH
@@ -60,8 +57,7 @@ bool isValidDate(const std::string &s) {
 // ============================================================================
 
 CandidateManager::CandidateManager() {
-    // Khởi tạo hệ thống
-    // Thử nạp dữ liệu từ input.txt, nếu chưa có thì nạp dữ liệu mẫu ban đầu
+
     if (!Utils::loadFromFile("input.txt", candidateList, hashTable)) {
         initSampleData();
     }
@@ -72,7 +68,6 @@ CandidateManager::~CandidateManager() {
     hashTable.clear();
 }
 
-// Nạp dữ liệu mẫu ban đầu để kiểm thử hệ thống bảng băm và danh sách liên kết
 void CandidateManager::initSampleData() {
     Candidate samples[] = {
         Candidate("TS001", "Nguyen Ba Linh", "Nam", "15/08/2004", "TP. Ho Chi Minh"),
@@ -107,9 +102,6 @@ bool CandidateManager::addCandidate() {
     std::cin >> sbd;
     sbd = trim(sbd);
 
-    // Doc HET cac truong truoc khi kiem tra. Neu thoat som ngay sau khi nhap SBD
-    // thi phan con lai cua dong nhap (khi chay bang file/pipe) se bi vong lap menu
-    // doc nham thanh lua chon.
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     std::cout << "Nhap Ho va Ten: ";
@@ -206,7 +198,6 @@ bool CandidateManager::updateCandidate() {
     std::getline(std::cin, newQueQuan);
     newQueQuan = trim(newQueQuan);
 
-    // Kiem tra TAT CA du lieu moi truoc khi ghi de (tranh sua nua chung)
     std::string gioiTinhChuan;
     if (!newGioiTinh.empty()) {
         gioiTinhChuan = normalizeGender(newGioiTinh);
@@ -221,7 +212,6 @@ bool CandidateManager::updateCandidate() {
         return false;
     }
 
-    // Luu chu cai dau CU (truoc khi doi ten) de xoa dung bucket trong HashTable
     char oldFirstLetter = pTarget->data.getFirstLetterOfName();
 
     if (!newHoTen.empty()) pTarget->data.setHoTen(newHoTen);
@@ -229,8 +219,6 @@ bool CandidateManager::updateCandidate() {
     if (!newNgaySinh.empty()) pTarget->data.setNgaySinh(newNgaySinh);
     if (!newQueQuan.empty()) pTarget->data.setQueQuan(newQueQuan);
 
-    // HashTable luu BAN SAO cua Candidate, nen sau BAT KY thay doi nao
-    // (ten, gioi tinh, ngay sinh, que quan) deu phai xoa ban cu va chen ban moi.
     hashTable.remove(sbd, oldFirstLetter);
     hashTable.insert(pTarget->data);
 
@@ -248,7 +236,6 @@ void CandidateManager::searchBySBD() {
     std::cin >> sbd;
     sbd = trim(sbd);
 
-    // Tim trong Bang bam truoc, neu khong co tim trong Danh sach lien ket
     result = hashTable.searchBySBD(sbd);
     if (result == nullptr) {
         result = candidateList.find(sbd);
@@ -262,7 +249,6 @@ void CandidateManager::searchBySBD() {
         std::cout << "[-] Khong tim thay thi sinh co SBD: " << sbd << "\n";
     }
 }
-   
 
 
 void CandidateManager::searchByName() {
@@ -271,7 +257,6 @@ void CandidateManager::searchByName() {
     std::cout << "\n--- TRA CUU THI SINH THEO TEN ---\n";
     std::cout << "Nhap ten thi sinh can tim: ";
 
-    // run() da bo newline sau lua chon menu, nen doc thang ca dong ten
     std::getline(std::cin, name);
 
     hashTable.searchByName(name);
@@ -346,8 +331,6 @@ void CandidateManager::loadData() {
     filename = trim(filename);
     if (filename.empty()) filename = "input.txt";
 
-    // Nạp vào vùng tạm trước: nếu file lỗi thì giữ nguyên dữ liệu đang có,
-    // nếu thành công mới thay thế (tránh cộng dồn 30 -> 60 -> 90 và tránh mất dữ liệu).
     LinkedList newList;
     HashTable newTable;
 
@@ -398,19 +381,16 @@ void CandidateManager::run() {
     while (choice != 0) {
         showMenu();
         if (!(std::cin >> choice)) {
-            if (std::cin.eof()) break; // Thoat neu gap EOF hoac dong luong nhap
+            if (std::cin.eof()) break; 
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "[!] Lua chon khong hop le! Vui long nhap so tu 0 den 11.\n";
-            // Tu C++11, khi trich xuat that bai thi 'choice' bi gan = 0.
-            // Neu khong gan lai -1 thi vong lap while(choice != 0) se ket thuc
-            // ngay sau lan nhap sai dau tien.
+
             choice = -1;
             continue;
         }
 
-        // Bỏ ký tự newline còn lại sau khi nhập số, để các hàm dùng getline
-        // (đọc/ghi file) nhận đúng đường dẫn người dùng nhập.
+
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
         switch (choice) {
