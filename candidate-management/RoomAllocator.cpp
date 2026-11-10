@@ -4,102 +4,107 @@
 #include <cctype>
 
 void RoomAllocator::allocateRooms(const LinkedList &list,
-                                  const HashTable &table,
+                                  const HashTable &,
                                   int numRooms) {
 
-    // BƯỚC 1: Kiểm tra dữ liệu đầu vào
+    // BƯỚC 1: KIỂM TRA DỮ LIỆU ĐẦU VÀO
     int totalCandidates = list.getCount();
 
     if (numRooms <= 0) {
-        std::cout << "[!] So phong thi phai lon hon 0!\n";
+        std::cout << "So phong thi phai lon hon 0!\n";
         return;
     }
 
     if (list.isEmpty()) {
-        std::cout << "[!] Danh sach thi sinh rong!\n";
+        std::cout << "Danh sach thi sinh rong!\n";
         return;
     }
 
     if (numRooms > totalCandidates) {
-        std::cout << "[!] So phong khong duoc lon hon so thi sinh!\n";
+        std::cout << "So phong khong duoc lon hon so thi sinh!\n";
         return;
     }
 
-    // BƯỚC 2: Khởi tạo danh sách phòng
+    // BƯỚC 2: KHỞI TẠO CÁC PHÒNG THI
     std::vector<LinkedList> rooms(numRooms);
     std::vector<int> roomSize(numRooms, 0);
 
-    // Đếm số thí sinh theo từng chữ cái trong mỗi phòng
+    // Lưu số lượng thí sinh có cùng chữ cái đầu trong mỗi phòng
     std::vector<std::vector<int>> letterCount(
         numRooms, std::vector<int>(26, 0)
     );
 
     int currentRoom = 0;
+    Node* p = list.getHead();
 
-    // BƯỚC 3: Lấy dữ liệu trực tiếp từ LinkedList
-    const Node* p = list.getHead();
-
+    // BƯỚC 3: DUYỆT LINKEDLIST VÀ PHÂN PHÒNG
     while (p != nullptr) {
 
-        // Lấy chữ cái đầu của Tên
+        // Lấy chữ cái đầu của tên thí sinh
         char firstLetter = p->data.getFirstLetterOfName();
-        firstLetter = std::toupper(
-            static_cast<unsigned char>(firstLetter)
+
+        firstLetter = static_cast<char>(
+            std::toupper(static_cast<unsigned char>(firstLetter))
         );
 
+        // Nếu ký tự không thuộc A-Z thì ưu tiên phòng ít thí sinh nhất
         if (firstLetter < 'A' || firstLetter > 'Z') {
+            int bestRoom = currentRoom;
+
+            for (int i = 1; i < numRooms; i++) {
+                int r = (currentRoom + i) % numRooms;
+
+                if (roomSize[r] < roomSize[bestRoom]) {
+                    bestRoom = r;
+                }
+            }
+
+            rooms[bestRoom].insertTail(p->data);
+            roomSize[bestRoom]++;
+
+            currentRoom = (bestRoom + 1) % numRooms;
             p = p->next;
             continue;
         }
 
         int index = firstLetter - 'A';
 
-        int bestRoom = -1;
-        int minSameLetter = totalCandidates + 1;
-        int minSize = totalCandidates + 1;
+        int bestRoom = currentRoom;
+        int minSameLetter = letterCount[currentRoom][index];
+        int minSize = roomSize[currentRoom];
 
-        // BƯỚC 4: Tìm phòng phù hợp nhất
-        for (int j = 0; j < numRooms; j++) {
+        // Tìm phòng có số thí sinh trùng chữ cái đầu ít nhất
+        for (int i = 1; i < numRooms; i++) {
+            int r = (currentRoom + i) % numRooms;
 
-            int r = (currentRoom + j) % numRooms;
-
-            int sameLetter = letterCount[r][index];
-
-            if (sameLetter < minSameLetter ||
-                (sameLetter == minSameLetter &&
+            if (letterCount[r][index] < minSameLetter ||
+                (letterCount[r][index] == minSameLetter &&
                  roomSize[r] < minSize)) {
 
-                minSameLetter = sameLetter;
-                minSize = roomSize[r];
                 bestRoom = r;
+                minSameLetter = letterCount[r][index];
+                minSize = roomSize[r];
             }
         }
 
-        // BƯỚC 5: Đưa thí sinh vào phòng
+        // Đưa thí sinh vào phòng được chọn
         rooms[bestRoom].insertTail(p->data);
-
         roomSize[bestRoom]++;
         letterCount[bestRoom][index]++;
 
+        // Chuyển vị trí bắt đầu sang phòng tiếp theo
         currentRoom = (bestRoom + 1) % numRooms;
 
         p = p->next;
     }
 
-    // BƯỚC 6: Xuất kết quả
-    std::cout << "\n========== KET QUA PHAN PHONG THI ==========\n";
-    std::cout << "Tong so thi sinh: " << totalCandidates << "\n";
-    std::cout << "Tong so phong thi: " << numRooms << "\n";
+    // BƯỚC 4: HIỂN THỊ KẾT QUẢ PHÂN PHÒNG
+    for (int i = 0; i < numRooms; i++) {
+        std::cout << "\n========== PHONG THI "
+                  << i + 1 << " ==========\n";
 
-    for (int r = 0; r < numRooms; r++) {
-
-        std::cout << "\n========== PHONG THI SO "
-                  << r + 1 << " ==========\n";
-
-        std::cout << "So thi sinh: " << roomSize[r] << "\n";
-
-        rooms[r].display();
+        std::cout << "So thi sinh: " << roomSize[i] << "\n";
+        rooms[i].display();
     }
-
     std::cout << "\n[+] Phan phong thi thanh cong!\n";
 }
