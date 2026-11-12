@@ -3,18 +3,15 @@
 #include "HashTable.h"
 #include <string>
 
-// ============================================================================
-// DỰ ÁN CTDL&GT: ĐỀ TÀI SỐ 8 - QUẢN LÝ DANH SÁCH THÍ SINH
-// PHỤ TRÁCH CHÍNH: NGUYỄN BÁ LINH (Kiến trúc hệ thống & Menu điều khiển)
-// PHỐI HỢP CÙNG: HOÀNG THẾ ANH & TRẦN NHẬT ANH
-// ============================================================================
+// Nhom 4 - De tai 8: Quan ly danh sach thi sinh
+// Nguyen Ba Linh, Hoang The Anh, Tran Nhat Anh
 
 class CandidateManager {
 private:
-    LinkedList candidateList; // Danh sách liên kết đơn lưu toàn bộ thí sinh
-    HashTable hashTable;      // Bảng băm 26 bucket (A-Z) tra cứu nhanh theo tên
+    LinkedList candidateList; // Danh sach lien ket luu thi sinh
+    HashTable hashTable;      // Bang bam 26 bucket (A-Z) tra cuu theo ten
 
-    // Giao diện menu và luồng điều khiển (Nguyễn Bá Linh hoàn thiện)
+    // Menu va du lieu mau (Nguyen Ba Linh)
     void showMenu() const;
     void initSampleData();
 
@@ -22,31 +19,23 @@ public:
     CandidateManager();
     ~CandidateManager();
 
-    // ========================================================================
-    // PHẦN VIỆC CỦA HOÀNG THẾ ANH:
-    // Thêm mới thí sinh (kiểm tra trùng SBD) & Cập nhật thông tin thí sinh
-    // ========================================================================
+    // Hoang The Anh: Them va sua thong tin thi sinh
     bool addCandidate();
     bool updateCandidate();
 
-    // ========================================================================
-    // PHẦN VIỆC CỦA TRẦN NHẬT ANH:
-    // Tra cứu thí sinh (theo SBD & theo Tên qua Bảng băm) & Xóa thí sinh
-    // ========================================================================
+    // Tran Nhat Anh: Tra cuu va xoa thi sinh
     void searchBySBD();
     void searchByName();
     bool deleteCandidate();
 
-    // ========================================================================
-    // CÁC CHỨC NĂNG GỌI ĐẾN MODULE CỦA THÀNH VIÊN KHÁC
-    // ========================================================================
-    void displayAll() const;          // Xem toàn bộ danh sách (Nguyễn Bá Linh)
-    void displayHashTable() const;    // Xem bảng băm 26 bucket A-Z (Nguyễn Bá Linh)
-    void sortCandidates();            // Gọi Sorter của Nguyễn Hữu Cường
-    void allocateExamRooms();         // Gọi RoomAllocator của Phạm Khánh Hưng
-    void loadData();                  // Gọi Utils của Đào Quang Thắng
-    void saveData();                  // Gọi Utils của Đào Quang Thắng
+    // Cac chuc nang goi module khac
+    void displayAll() const;          // Xem danh sach (Nguyen Ba Linh)
+    void displayHashTable() const;    // Xem bang bam (Nguyen Ba Linh)
+    void sortCandidates();            // Sap xep (Nguyen Huu Cuong)
+    void allocateExamRooms();         // Phan phong thi (Pham Khanh Hung)
+    void loadData();                  // Doc file (Dao Quang Thang)
+    void saveData();                  // Ghi file (Dao Quang Thang)
 
-    // Vòng lặp chạy ứng dụng chính
+    // Vong lap chay chuong trinh
     void run();
 };

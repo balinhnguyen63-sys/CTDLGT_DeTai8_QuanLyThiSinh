@@ -5,6 +5,8 @@
 *.dll
 .build/
 build/
+# Visual Studio & VS Code
+.vs/
 .vscode/
 
 # Temporary files

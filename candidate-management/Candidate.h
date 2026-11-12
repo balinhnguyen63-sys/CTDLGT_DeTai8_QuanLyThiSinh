@@ -3,11 +3,7 @@
 #include <string>
 #include <iomanip>
 
-// ============================================================================
-// DỰ ÁN CTDL&GT: ĐỀ TÀI SỐ 8 - QUẢN LÝ DANH SÁCH THÍ SINH (HASH TABLE, LINKED LIST)
-// PHỤ TRÁCH: NGUYỄN BÁ LINH (TRƯỞNG NHÓM - MSSV: 044207007737)
-// NỘI DUNG: Mô hình dữ liệu Thí sinh (Candidate)
-// ============================================================================
+// Nguyen Ba Linh: Mo hinh du lieu Thi sinh (Candidate)
 
 class Candidate {
 private:

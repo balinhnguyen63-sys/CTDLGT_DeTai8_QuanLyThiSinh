@@ -1,11 +1,7 @@
 #pragma once
 #include "Candidate.h"
 
-// ============================================================================
-// DỰ ÁN CTDL&GT: ĐỀ TÀI SỐ 8 - QUẢN LÝ DANH SÁCH THÍ SINH
-// PHỤ TRÁCH: NGUYỄN BÁ LINH (TRƯỞNG NHÓM - MSSV: 044207007737)
-// NỘI DUNG: Cấu trúc Danh sách liên kết đơn (Node & LinkedList)
-// ============================================================================
+// Nguyen Ba Linh: Danh sach lien ket don (Node & LinkedList)
 
 // Nút trong danh sách liên kết đơn
 struct Node {

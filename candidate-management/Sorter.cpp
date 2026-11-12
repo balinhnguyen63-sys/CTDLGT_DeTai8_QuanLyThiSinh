@@ -1,12 +1,7 @@
 #include "Sorter.h"
 #include <iostream>
 
-// ============================================================================
-// DỰ ÁN CTDL&GT: ĐỀ TÀI SỐ 8 - QUẢN LÝ DANH SÁCH THÍ SINH
-// GIẢNG VIÊN HƯỚNG DẪN: ThS. BÙI VĂN THƯỢNG - LỚP: 012012400212 - NHÓM 4
-// PHỤ TRÁCH THỰC HIỆN: NGUYỄN HỮU CƯỜNG
-// NHIỆM VỤ: Sắp xếp DSLK và các bucket của HashTable theo Tên A-Z bằng Merge Sort (stable)
-// ============================================================================
+// Nguyen Huu Cuong: Cai dat Merge Sort cho danh sach lien ket va cac bucket
 
 // Trả về true nếu thí sinh x phải đứng TRƯỚC thí sinh y MỘT CÁCH CHẶT CHẼ
 static bool dungTruoc(const Candidate &x, const Candidate &y) {

@@ -42,7 +42,7 @@ DeTai8_QuanLyThiSinh/
 | 2 | **Hoàng Thế Anh** | Thành viên (100%) | `CandidateManager.h`<br>`CandidateManager.cpp` | Chức năng thêm mới thí sinh (kiểm tra trùng SBD) và cập nhật thông tin thí sinh. |
 | 3 | **Trần Nhật Anh** | Thành viên (100%) | `CandidateManager.h`<br>`CandidateManager.cpp` | Chức năng tra cứu thí sinh theo SBD, tra cứu theo Tên qua Bảng băm, và xóa thí sinh khỏi hệ thống. |
 | 4 | **Nguyễn Hữu Cường** | Thành viên (100%) | `Sorter.h`<br>`Sorter.cpp` | Chức năng sắp xếp danh sách liên kết theo thứ tự Tên tăng dần từ A đến Z. |
-| 5 | **Phạm Khánh Hưng** | Thành viên (100%) | `RoomAllocator.h`<br>`RoomAllocator.cpp` | Chức năng phân danh sách vào n phòng thi sao cho xác suất tên trùng chữ cái đầu là ít nhất (Round-Robin qua các bucket của HashTable). |
+| 5 | **Phạm Khánh Hưng** | Thành viên (100%) | `RoomAllocator.h`<br>`RoomAllocator.cpp` | Chức năng phân danh sách vào n phòng thi sao cho xác suất tên trùng chữ cái đầu là ít nhất (Thuật toán tham lam Greedy đếm tần suất chữ cái đầu để giảm thiểu trùng lặp). |
 | 6 | **Đào Quang Thắng** | Thành viên (100%) | `Utils.h`<br>`Utils.cpp`<br>`input.txt` | Chức năng đọc dữ liệu từ file `input.txt` vào hệ thống, lưu danh sách ra file TXT, chuẩn bị bộ dữ liệu mẫu. |
 
 ---

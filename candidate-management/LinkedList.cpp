@@ -1,11 +1,7 @@
 #include "LinkedList.h"
 #include <iostream>
 
-// ============================================================================
-// DỰ ÁN CTDL&GT: ĐỀ TÀI SỐ 8 - QUẢN LÝ DANH SÁCH THÍ SINH
-// PHỤ TRÁCH: NGUYỄN BÁ LINH (TRƯỞNG NHÓM - MSSV: 044207007737)
-// NỘI DUNG: Cài đặt các phương thức của Node & LinkedList
-// ============================================================================
+// Nguyen Ba Linh: Cai dat cac phuong thuc cua Node & LinkedList
 
 Node::Node(const Candidate &c) : data(c), next(nullptr) {}
 

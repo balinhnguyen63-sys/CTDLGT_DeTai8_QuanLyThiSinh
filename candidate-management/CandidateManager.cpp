@@ -88,11 +88,7 @@ void CandidateManager::initSampleData() {
     }
 }
 
-// ============================================================================
-// PHẦN VIỆC CỦA THÀNH VIÊN: HOÀNG THẾ ANH
-// NHIỆM VỤ: Thêm thí sinh mới (kiểm tra trùng SBD) & Cập nhật thông tin thí sinh
-// KIẾN TRÚC ÁP DỤNG: Chương 2 (Tìm kiếm tuyến tính) & Chương 4 (DSLK thêm cuối)
-// ============================================================================
+// Hoang The Anh: Them thi sinh moi va cap nhat thong tin thi sinh
 
 bool CandidateManager::addCandidate() {
     std::string sbd, hoTen, gioiTinh, ngaySinh, queQuan;
@@ -104,26 +100,12 @@ bool CandidateManager::addCandidate() {
 
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
-    std::cout << "Nhap Ho va Ten: ";
-    std::getline(std::cin, hoTen);
-    hoTen = trim(hoTen);
-
-    std::cout << "Nhap Gioi Tinh (Nam/Nu): ";
-    std::getline(std::cin, gioiTinh);
-
-    std::cout << "Nhap Ngay Sinh (dd/mm/yyyy): ";
-    std::getline(std::cin, ngaySinh);
-    ngaySinh = trim(ngaySinh);
-
-    std::cout << "Nhap Que Quan: ";
-    std::getline(std::cin, queQuan);
-    queQuan = trim(queQuan);
-
     if (sbd.empty()) {
         std::cout << "[!] Ma du thi khong duoc de trong!\n";
         return false;
     }
 
+    // Kiem tra trung SBD ngay sau khi nhap
     if (candidateList.find(sbd) != nullptr ||
         hashTable.searchBySBD(sbd) != nullptr) {
         std::cout << "[!] Loi: Ma du thi " << sbd
@@ -131,21 +113,33 @@ bool CandidateManager::addCandidate() {
         return false;
     }
 
+    std::cout << "Nhap Ho va Ten: ";
+    std::getline(std::cin, hoTen);
+    hoTen = trim(hoTen);
     if (hoTen.empty()) {
         std::cout << "[!] Ho va Ten khong duoc de trong!\n";
         return false;
     }
 
+    std::cout << "Nhap Gioi Tinh (Nam/Nu): ";
+    std::getline(std::cin, gioiTinh);
     std::string gioiTinhChuan = normalizeGender(gioiTinh);
     if (gioiTinhChuan.empty()) {
         std::cout << "[!] Gioi tinh khong hop le (chi nhan Nam hoac Nu)!\n";
         return false;
     }
 
+    std::cout << "Nhap Ngay Sinh (dd/mm/yyyy): ";
+    std::getline(std::cin, ngaySinh);
+    ngaySinh = trim(ngaySinh);
     if (!isValidDate(ngaySinh)) {
         std::cout << "[!] Ngay sinh khong hop le (dinh dang dd/mm/yyyy)!\n";
         return false;
     }
+
+    std::cout << "Nhap Que Quan: ";
+    std::getline(std::cin, queQuan);
+    queQuan = trim(queQuan);
 
     Candidate newCandidate(sbd, hoTen, gioiTinhChuan, ngaySinh, queQuan);
 
@@ -290,10 +284,7 @@ bool CandidateManager::deleteCandidate() {
 }
    
 
-// ============================================================================
-// PHẦN VIỆC CỦA TRƯỞNG NHÓM: NGUYỄN BÁ LINH
-// GIAO DIỆN MENU, ĐIỀU PHỐI VÀ LIÊN KẾT CÁC MODULE TOÀN HỆ THỐNG
-// ============================================================================
+// Nguyen Ba Linh: Giao dien menu va dieu phoi he thong
 
 void CandidateManager::displayAll() const {
     std::cout << "\n=======================================================================\n";

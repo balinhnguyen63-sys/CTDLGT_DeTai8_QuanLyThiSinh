@@ -2,11 +2,7 @@
 #include "LinkedList.h"
 #include <string>
 
-// ============================================================================
-// DỰ ÁN CTDL&GT: ĐỀ TÀI SỐ 8 - QUẢN LÝ DANH SÁCH THÍ SINH
-// PHỤ TRÁCH: NGUYỄN BÁ LINH (TRƯỞNG NHÓM - MSSV: 044207007737)
-// NỘI DUNG: Cấu trúc Bảng băm dạng bảng tra 26 nhóm chữ cái (A-Z)
-// ============================================================================
+// Nguyen Ba Linh: Bang bam 26 nhom chu cai (A-Z) dung danh sach lien ket (chaining)
 
 class HashTable {
 public:
