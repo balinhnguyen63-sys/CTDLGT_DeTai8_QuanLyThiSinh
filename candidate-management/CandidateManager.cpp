@@ -31,24 +31,34 @@ string normalizeGender(const string &raw) {
     return "";
 }
 
-bool isValidDate(const string &s) {
-    if (s.size() != 10 || s[2] != '/' || s[5] != '/') return false;
-    for (size_t i = 0; i < s.size(); ++i) {
-        if (i == 2 || i == 5) continue;
-        if (!isdigit((unsigned char)s[i])) return false;
+bool laNamNhuan(int nam) {
+    return (nam % 400 == 0) || (nam % 4 == 0 && nam % 100 != 0);
+}
+
+int soNgayTrongThang(int thang, int nam) {
+    switch (thang) {
+        case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+            return 31;
+        case 4: case 6: case 9: case 11:
+            return 30;
+        case 2:
+            return laNamNhuan(nam) ? 29 : 28;
+        default:
+            return 0;
     }
+}
 
-    int day = stoi(s.substr(0, 2));
-    int month = stoi(s.substr(3, 2));
-    int year = stoi(s.substr(6, 4));
-    if (year < 1900 || year > 2100 || month < 1 || month > 12) return false;
+bool kiemTraNgayHopLe(int ngay, int thang, int nam) {
+    if (nam < 1900 || nam > 2100) return false;
+    if (thang < 1 || thang > 12) return false;
+    if (ngay < 1 || ngay > soNgayTrongThang(thang, nam)) return false;
+    return true;
+}
 
-    static const int daysInMonth[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    int maxDay = daysInMonth[month - 1];
-    bool leapYear = (year % 400 == 0) || (year % 4 == 0 && year % 100 != 0);
-    if (month == 2 && leapYear) maxDay = 29;
-
-    return day >= 1 && day <= maxDay;
+string dinhDangNgay(int ngay, int thang, int nam) {
+    string sNgay = (ngay < 10 ? "0" : "") + to_string(ngay);
+    string sThang = (thang < 10 ? "0" : "") + to_string(thang);
+    return sNgay + "/" + sThang + "/" + to_string(nam);
 }
 } 
 
@@ -126,13 +136,36 @@ bool CandidateManager::addCandidate() {
         return false;
     }
 
-    cout << "Nhap Ngay Sinh (dd/mm/yyyy): ";
-    getline(cin, ngaySinh);
-    ngaySinh = trim(ngaySinh);
-    if (!isValidDate(ngaySinh)) {
-        cout << "[!] Ngay sinh khong hop le (dinh dang dd/mm/yyyy)!\n";
+    int ngay = 0, thang = 0, nam = 0;
+    cout << "Nhap ngay sinh (1-31): ";
+    if (!(cin >> ngay)) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "[!] Ngay sinh khong hop le!\n";
         return false;
     }
+    cout << "Nhap thang sinh (1-12): ";
+    if (!(cin >> thang)) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "[!] Thang sinh khong hop le!\n";
+        return false;
+    }
+    cout << "Nhap nam sinh (vi du 2004): ";
+    if (!(cin >> nam)) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "[!] Nam sinh khong hop le!\n";
+        return false;
+    }
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    if (!kiemTraNgayHopLe(ngay, thang, nam)) {
+        cout << "[!] Ngay thang nam sinh khong hop le!\n";
+        return false;
+    }
+
+    ngaySinh = dinhDangNgay(ngay, thang, nam);
 
     cout << "Nhap Que Quan: ";
     getline(cin, queQuan);
@@ -180,9 +213,43 @@ bool CandidateManager::updateCandidate() {
     getline(cin, newGioiTinh);
     newGioiTinh = trim(newGioiTinh);
 
-    cout << "Nhap Ngay Sinh moi (dd/mm/yyyy, de trong neu giu nguyen): ";
-    getline(cin, newNgaySinh);
-    newNgaySinh = trim(newNgaySinh);
+    cout << "Nhap ngay sinh moi (1-31, de trong neu giu nguyen): ";
+    string sNgay;
+    getline(cin, sNgay);
+    sNgay = trim(sNgay);
+    if (!sNgay.empty()) {
+        int ngay = 0, thang = 0, nam = 0;
+        try {
+            ngay = stoi(sNgay);
+        } catch (...) {
+            cout << "[!] Ngay sinh khong hop le!\n";
+            return false;
+        }
+        cout << "Nhap thang sinh moi (1-12): ";
+        string sThang;
+        getline(cin, sThang);
+        try {
+            thang = stoi(sThang);
+        } catch (...) {
+            cout << "[!] Thang sinh khong hop le!\n";
+            return false;
+        }
+        cout << "Nhap nam sinh moi (vi du 2004): ";
+        string sNam;
+        getline(cin, sNam);
+        try {
+            nam = stoi(sNam);
+        } catch (...) {
+            cout << "[!] Nam sinh khong hop le!\n";
+            return false;
+        }
+
+        if (!kiemTraNgayHopLe(ngay, thang, nam)) {
+            cout << "[!] Ngay thang nam sinh khong hop le!\n";
+            return false;
+        }
+        newNgaySinh = dinhDangNgay(ngay, thang, nam);
+    }
 
     cout << "Nhap Que Quan moi (de trong neu giu nguyen): ";
     getline(cin, newQueQuan);
@@ -195,11 +262,6 @@ bool CandidateManager::updateCandidate() {
             cout << "[!] Gioi tinh khong hop le (chi nhan Nam hoac Nu)!\n";
             return false;
         }
-    }
-
-    if (!newNgaySinh.empty() && !isValidDate(newNgaySinh)) {
-        cout << "[!] Ngay sinh khong hop le (dinh dang dd/mm/yyyy)!\n";
-        return false;
     }
 
     char oldFirstLetter = pTarget->data.getFirstLetterOfName();
