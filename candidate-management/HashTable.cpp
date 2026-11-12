@@ -127,9 +127,9 @@ void HashTable::searchByName(const string &name) const {
 
             if (match) {
                 if (count == 0) {
-                    cout << "+---------+-----------------------+---------+-------------+----------------------+\n";
-                    cout << "| SBD     | Ho va Ten             | Phai    | Ngay Sinh   | Que Quan             |\n";
-                    cout << "+---------+-----------------------+---------+-------------+----------------------+\n";
+                    cout << "+--------------+-----------------------+---------+-------------+----------------------+\n";
+                    cout << "| SBD          | Ho va Ten             | Phai    | Ngay Sinh   | Que Quan             |\n";
+                    cout << "+--------------+-----------------------+---------+-------------+----------------------+\n";
                 }
                 p->data.displayRow();
                 count++;
@@ -141,7 +141,7 @@ void HashTable::searchByName(const string &name) const {
     if (count == 0) {
         cout << "--> Khong tim thay thi sinh nao co ten \"" << query << "\".\n";
     } else {
-        cout << "+---------+-----------------------+---------+-------------+----------------------+\n";
+        cout << "+--------------+-----------------------+---------+-------------+----------------------+\n";
         cout << "Tim thay " << count << " thi sinh phu hop.\n";
     }
 }

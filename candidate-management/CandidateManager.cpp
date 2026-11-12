@@ -82,7 +82,8 @@ bool chuoiThanhSo(const string &s, int &value) {
     return true;
 }
 
-// Nhap 3 chu so cua SBD, tu dong them tien to "TS".
+// Nhap 1-10 chu so cua SBD, tu dong them tien to "TS".
+// Neu nhap it hon 3 chu so thi tu them so 0 o dau cho du 3.
 bool nhapSBD(const string &nhac, string &sbd) {
     while (true) {
         cout << nhac;
@@ -90,13 +91,17 @@ bool nhapSBD(const string &nhac, string &sbd) {
         if (!docDong(line)) return false;
         line = trim(line);
 
-        bool hopLe = (line.size() == 3);
+        bool hopLe = !line.empty() && line.size() <= 10;
         for (char c : line) {
             if (!isdigit((unsigned char)c)) hopLe = false;
         }
         if (!hopLe) {
-            cout << "[!] SBD phai gom dung 3 chu so! Nhap lai.\n";
+            cout << "[!] SBD phai gom tu 1 den 10 chu so! Nhap lai.\n";
             continue;
+        }
+
+        while (line.size() < 3) {
+            line = "0" + line;
         }
 
         sbd = "TS" + line;
@@ -301,9 +306,9 @@ bool CandidateManager::addCandidate() {
 
     cout << "\n--- THEM THI SINH MOI ---\n";
 
-    // Nhap SBD: chi nhap 3 chu so, tu them "TS", khong duoc trung.
+    // Nhap SBD: 1-10 chu so, tu them "TS", khong duoc trung.
     while (true) {
-        if (!nhapSBD("Nhap 3 chu so SBD (vi du: 030): ", sbd)) return false;
+        if (!nhapSBD("Nhap SBD (1-10 chu so, vi du: 030): ", sbd)) return false;
         if (candidateList.find(sbd) != nullptr ||
             hashTable.searchBySBD(sbd) != nullptr) {
             cout << "[!] Loi: Ma du thi " << sbd
@@ -341,7 +346,7 @@ bool CandidateManager::updateCandidate() {
 
     cout << "\n--- CAP NHAT THONG TIN THI SINH ---\n";
 
-    if (!nhapSBD("Nhap 3 chu so SBD thi sinh can cap nhat: ", sbd)) return false;
+    if (!nhapSBD("Nhap SBD thi sinh can cap nhat (1-10 chu so): ", sbd)) return false;
 
     pTarget = candidateList.find(sbd);
 
@@ -400,7 +405,7 @@ void CandidateManager::searchBySBD() {
     Node* result = nullptr;
 
     cout << "\n--- TRA CUU THI SINH THEO SO BAO DANH ---\n";
-    if (!nhapSBD("Nhap 3 chu so SBD can tim: ", sbd)) return;
+    if (!nhapSBD("Nhap SBD can tim (1-10 chu so): ", sbd)) return;
 
     result = hashTable.searchBySBD(sbd);
     if (result == nullptr) {
@@ -432,7 +437,7 @@ bool CandidateManager::deleteCandidate() {
     Node* pTarget = nullptr;
 
     cout << "\n--- XOA THI SINH KHOI HE THONG ---\n";
-    if (!nhapSBD("Nhap 3 chu so SBD thi sinh can xoa: ", sbd)) return false;
+    if (!nhapSBD("Nhap SBD thi sinh can xoa (1-10 chu so): ", sbd)) return false;
 
     pTarget = candidateList.find(sbd);
 
@@ -522,8 +527,8 @@ void CandidateManager::showMenu() const {
     cout << "  2. Xem Bang bam thi sinh dang bang tra 26 nhom A-Z (Hash Table)\n";
     cout << "  3. Them thi sinh moi (Hoang The Anh)\n";
     cout << "  4. Cap nhat thong tin thi sinh (Hoang The Anh)\n";
-    cout << "  5. Tra cuu thi sinh theo So Bao Danh (Tran Nhat Anh)\n";
-    cout << "  6. Tra cuu thi sinh theo Ten tren Bang bam (Tran Nhat Anh)\n";
+    cout << "  5. Tra cuu theo SBD - biet ma thi tim ma (Tran Nhat Anh)\n";
+    cout << "  6. Tra cuu theo Ten - hien danh sach ten phu hop (Tran Nhat Anh)\n";
     cout << "  7. Xoa thi sinh khoi he thong (Tran Nhat Anh)\n";
     cout << "  8. Sap xep danh sach thi sinh theo Ten tang dan A-Z (Nguyen Huu Cuong)\n";
     cout << "  9. Phan chia thi sinh vao n phong thi toi uu xac suat (Pham Khanh Hung)\n";

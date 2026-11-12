@@ -58,7 +58,7 @@ char Candidate::getFirstLetterOfName() const {
 
 // In mot dong trong bang danh sach thi sinh
 void Candidate::displayRow() const {
-    cout << "| " << left << setw(8) << sbd
+    cout << "| " << left << setw(13) << sbd
          << "| " << left << setw(22) << hoTen
          << "| " << left << setw(8) << gioiTinh
          << "| " << left << setw(12) << ngaySinh
