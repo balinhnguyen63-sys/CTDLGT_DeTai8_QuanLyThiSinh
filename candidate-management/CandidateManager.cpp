@@ -82,20 +82,26 @@ bool chuoiThanhSo(const string &s, int &value) {
     return true;
 }
 
-string chuanHoaSBD(const string &s) {
-    string out = trim(s);
-    for (char &c : out) {
-        c = (char)toupper((unsigned char)c);
-    }
-    return out;
-}
+// Nhap 3 chu so cua SBD, tu dong them tien to "TS".
+bool nhapSBD(const string &nhac, string &sbd) {
+    while (true) {
+        cout << nhac;
+        string line;
+        if (!docDong(line)) return false;
+        line = trim(line);
 
-bool laSBDHopLe(const string &s) {
-    if (s.empty()) return false;
-    for (unsigned char c : s) {
-        if (!isalnum(c)) return false;
+        bool hopLe = (line.size() == 3);
+        for (char c : line) {
+            if (!isdigit((unsigned char)c)) hopLe = false;
+        }
+        if (!hopLe) {
+            cout << "[!] SBD phai gom dung 3 chu so! Nhap lai.\n";
+            continue;
+        }
+
+        sbd = "TS" + line;
+        return true;
     }
-    return true;
 }
 
 // Nhap Ho va ten dem. duocDeTrong = true dung cho chuc nang cap nhat.
@@ -295,25 +301,13 @@ bool CandidateManager::addCandidate() {
 
     cout << "\n--- THEM THI SINH MOI ---\n";
 
-    // Nhap SBD: sai dinh dang hoac trung thi bat nhap lai.
+    // Nhap SBD: chi nhap 3 chu so, tu them "TS", khong duoc trung.
     while (true) {
-        cout << "Nhap Ma Du Thi / SBD (vi du: TS099): ";
-        string line;
-        if (!docDong(line)) return false;
-
-        sbd = chuanHoaSBD(line);
-        if (sbd.empty()) {
-            cout << "[!] Ma du thi khong duoc de trong! Nhap lai.\n";
-            continue;
-        }
-        if (!laSBDHopLe(sbd)) {
-            cout << "[!] Ma du thi chi duoc chua chu cai va chu so! Nhap lai.\n";
-            continue;
-        }
+        if (!nhapSBD("Nhap 3 chu so SBD (vi du: 030): ", sbd)) return false;
         if (candidateList.find(sbd) != nullptr ||
             hashTable.searchBySBD(sbd) != nullptr) {
             cout << "[!] Loi: Ma du thi " << sbd
-                 << " da ton tai trong he thong! Nhap SBD khac.\n";
+                 << " da ton tai trong he thong! Nhap so khac.\n";
             continue;
         }
         break;
@@ -347,22 +341,7 @@ bool CandidateManager::updateCandidate() {
 
     cout << "\n--- CAP NHAT THONG TIN THI SINH ---\n";
 
-    while (true) {
-        cout << "Nhap SBD thi sinh can cap nhat: ";
-        string line;
-        if (!docDong(line)) return false;
-
-        sbd = chuanHoaSBD(line);
-        if (sbd.empty()) {
-            cout << "[!] SBD khong duoc de trong! Nhap lai.\n";
-            continue;
-        }
-        if (!laSBDHopLe(sbd)) {
-            cout << "[!] SBD chi duoc chua chu cai va chu so! Nhap lai.\n";
-            continue;
-        }
-        break;
-    }
+    if (!nhapSBD("Nhap 3 chu so SBD thi sinh can cap nhat: ", sbd)) return false;
 
     pTarget = candidateList.find(sbd);
 
@@ -421,9 +400,7 @@ void CandidateManager::searchBySBD() {
     Node* result = nullptr;
 
     cout << "\n--- TRA CUU THI SINH THEO SO BAO DANH ---\n";
-    cout << "Nhap So Bao Danh: ";
-    cin >> sbd;
-    sbd = trim(sbd);
+    if (!nhapSBD("Nhap 3 chu so SBD can tim: ", sbd)) return;
 
     result = hashTable.searchBySBD(sbd);
     if (result == nullptr) {
@@ -455,9 +432,7 @@ bool CandidateManager::deleteCandidate() {
     Node* pTarget = nullptr;
 
     cout << "\n--- XOA THI SINH KHOI HE THONG ---\n";
-    cout << "Nhap SBD thi sinh can xoa: ";
-    cin >> sbd;
-    sbd = trim(sbd);
+    if (!nhapSBD("Nhap 3 chu so SBD thi sinh can xoa: ", sbd)) return false;
 
     pTarget = candidateList.find(sbd);
 
