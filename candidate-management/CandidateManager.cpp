@@ -532,11 +532,10 @@ void CandidateManager::showMenu() const {
     cout << "  7. Xoa thi sinh khoi he thong (Tran Nhat Anh)\n";
     cout << "  8. Sap xep danh sach thi sinh theo Ten tang dan A-Z (Nguyen Huu Cuong)\n";
     cout << "  9. Phan chia thi sinh vao n phong thi toi uu xac suat (Pham Khanh Hung)\n";
-    cout << " 10. Doc du lieu thi sinh tu file input.txt (Dao Quang Thang)\n";
-    cout << " 11. Luu danh sach thi sinh ra file TXT (Dao Quang Thang)\n";
+    cout << " 10. Luu danh sach thi sinh ra file TXT (Dao Quang Thang)\n";
     cout << "  0. Thoat chuong trinh\n";
     cout << "=======================================================================\n";
-    cout << "Lua chon cua ban [0-11]: ";
+    cout << "Lua chon cua ban [0-10]: ";
 }
 
 void CandidateManager::run() {
@@ -547,7 +546,7 @@ void CandidateManager::run() {
             if (cin.eof()) break; 
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "[!] Lua chon khong hop le! Vui long nhap so tu 0 den 11.\n";
+            cout << "[!] Lua chon khong hop le! Vui long nhap so tu 0 den 10.\n";
 
             choice = -1;
             continue;
@@ -584,16 +583,13 @@ void CandidateManager::run() {
                 allocateExamRooms();
                 break;
             case 10:
-                loadData();
-                break;
-            case 11:
                 saveData();
                 break;
             case 0:
                 cout << "\n[!] Cam on ban da su dung chuong trinh! Tam biet.\n";
                 break;
             default:
-                cout << "[!] Lua chon khong ton tai! Vui long chon lai tu 0 den 11.\n";
+                cout << "[!] Lua chon khong ton tai! Vui long chon lai tu 0 den 10.\n";
                 break;
         }
     }
