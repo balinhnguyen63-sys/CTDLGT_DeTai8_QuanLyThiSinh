@@ -520,19 +520,16 @@ void CandidateManager::saveData() {
 
 void CandidateManager::showMenu() const {
     cout << "\n=======================================================================\n";
-    cout << "  CHUONG TRINH QUAN LY THI SINH - DE TAI 8 (HASH TABLE & LINKED LIST)  \n";
-    cout << "  NHOM 4 - GVHD: ThS. BUI VAN THUONG - TRUONG NHOM: NGUYEN BA LINH     \n";
-    cout << "=======================================================================\n";
     cout << "  1. Hien thi danh sach tat ca thi sinh (Linked List)\n";
     cout << "  2. Xem Bang bam thi sinh dang bang tra 26 nhom A-Z (Hash Table)\n";
-    cout << "  3. Them thi sinh moi (Hoang The Anh)\n";
-    cout << "  4. Cap nhat thong tin thi sinh (Hoang The Anh)\n";
-    cout << "  5. Tra cuu theo SBD - biet ma thi tim ma (Tran Nhat Anh)\n";
-    cout << "  6. Tra cuu theo Ten - hien danh sach ten phu hop (Tran Nhat Anh)\n";
-    cout << "  7. Xoa thi sinh khoi he thong (Tran Nhat Anh)\n";
-    cout << "  8. Sap xep danh sach thi sinh theo Ten tang dan A-Z (Nguyen Huu Cuong)\n";
-    cout << "  9. Phan chia thi sinh vao n phong thi toi uu xac suat (Pham Khanh Hung)\n";
-    cout << " 10. Luu danh sach thi sinh ra file TXT (Dao Quang Thang)\n";
+    cout << "  3. Them thi sinh moi\n";
+    cout << "  4. Cap nhat thong tin thi sinh\n";
+    cout << "  5. Tra cuu theo SBD - biet ma thi tim ma\n";
+    cout << "  6. Tra cuu theo Ten - hien danh sach ten phu hop\n";
+    cout << "  7. Xoa thi sinh khoi he thong\n";
+    cout << "  8. Sap xep danh sach thi sinh theo Ten tang dan A-Z\n";
+    cout << "  9. Phan chia thi sinh vao n phong thi toi uu xac suat\n";
+    cout << " 10. Luu danh sach thi sinh ra file TXT\n";
     cout << "  0. Thoat chuong trinh\n";
     cout << "=======================================================================\n";
     cout << "Lua chon cua ban [0-10]: ";
