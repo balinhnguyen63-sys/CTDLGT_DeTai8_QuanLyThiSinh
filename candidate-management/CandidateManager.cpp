@@ -19,32 +19,12 @@ string trim(const string &s) {
 }
 
 string normalizeGender(const string &raw) {
-    string s = raw;
-
-    // Quy doi cac bien the UTF-8 cua chu u co dau ve 'u' de "Nữ" cung nhan duoc.
-    const string uVariants[] = {
-        "\xC6\xAF", "\xC6\xB0",             // Ư, ư
-        "\xE1\xBB\xA8", "\xE1\xBB\xA9",     // Ứ, ứ
-        "\xE1\xBB\xAA", "\xE1\xBB\xAB",     // Ừ, ừ
-        "\xE1\xBB\xAC", "\xE1\xBB\xAD",     // Ử, ử
-        "\xE1\xBB\xAE", "\xE1\xBB\xAF"      // Ữ, ữ
-    };
-    for (const string &v : uVariants) {
-        size_t pos;
-        while ((pos = s.find(v)) != string::npos) {
-            s.replace(pos, v.size(), "u");
-        }
+    string s = trim(raw);
+    for (char &c : s) {
+        c = (char)tolower((unsigned char)c);
     }
-
-    string ascii;
-    for (unsigned char c : s) {
-        if (c < 0x80) {
-            ascii += (char)tolower(c);
-        }
-    }
-    ascii = trim(ascii);
-    if (ascii == "nam") return "Nam";
-    if (ascii == "nu") return "Nu";
+    if (s == "nam") return "Nam";
+    if (s == "nu") return "Nu";
     return "";
 }
 
@@ -78,56 +58,26 @@ string dinhDangNgay(int ngay, int thang, int nam) {
     return sNgay + "/" + sThang + "/" + to_string(nam);
 }
 
-// Doc mot dong; tra ve false khi gap EOF de khong bi lap vo han.
+// Doc mot dong; tra ve false khi gap EOF.
 bool docDong(string &line) {
-    while (true) {
-        if (getline(cin, line)) return true;
-        if (cin.eof()) return false;
-        cin.clear();
-    }
-}
-
-// Trim va gop nhieu khoang trang thanh mot khoang trang.
-string chuanHoaKhoangTrang(const string &s) {
-    string out;
-    bool vuaGapKhoang = false;
-    for (char c : trim(s)) {
-        if (c == ' ' || c == '\t') {
-            if (!out.empty() && !vuaGapKhoang) {
-                out += ' ';
-                vuaGapKhoang = true;
-            }
-        }
-        else {
-            out += c;
-            vuaGapKhoang = false;
-        }
-    }
-    return out;
-}
-
-bool laChuCai(unsigned char c) {
-    return isalpha(c) != 0 || c >= 0x80; // byte >= 0x80 la chu cai tieng Viet UTF-8
+    if (!getline(cin, line)) return false;
+    return true;
 }
 
 bool chiChuaChuCaiVaKhoangTrang(const string &s) {
     if (s.empty()) return false;
     for (unsigned char c : s) {
-        if (!laChuCai(c) && c != ' ') return false;
+        if (!isalpha(c) && c != ' ') return false;
     }
     return true;
 }
 
 bool chuoiThanhSo(const string &s, int &value) {
-    if (s.empty()) return false;
-    for (unsigned char c : s) {
-        if (!isdigit(c)) return false;
-    }
-    try {
-        value = stoi(s);
-    }
-    catch (...) {
-        return false;
+    if (s.empty() || s.size() > 9) return false;
+    value = 0;
+    for (char c : s) {
+        if (!isdigit((unsigned char)c)) return false;
+        value = value * 10 + (c - '0');
     }
     return true;
 }
@@ -157,7 +107,7 @@ bool nhapHoDem(string &hoDem, bool duocDeTrong) {
         string line;
         if (!docDong(line)) return false;
 
-        line = chuanHoaKhoangTrang(line);
+        line = trim(line);
         if (line.empty()) {
             if (duocDeTrong) {
                 hoDem = "";
@@ -184,7 +134,7 @@ bool nhapTen(string &ten, bool duocDeTrong) {
         string line;
         if (!docDong(line)) return false;
 
-        line = chuanHoaKhoangTrang(line);
+        line = trim(line);
         if (line.empty()) {
             if (duocDeTrong) {
                 ten = "";
@@ -290,7 +240,7 @@ bool nhapQueQuan(string &queQuan, bool duocDeTrong) {
         string line;
         if (!docDong(line)) return false;
 
-        line = chuanHoaKhoangTrang(line);
+        line = trim(line);
         if (line.empty()) {
             if (duocDeTrong) {
                 queQuan = "";
@@ -462,7 +412,6 @@ bool CandidateManager::updateCandidate() {
     hashTable.insert(pTarget->data);
 
     cout << "\n[+] Cap nhat thong tin thi sinh thanh cong!\n";
-    pTarget->data.displayRow();
 
     return true;
 }
