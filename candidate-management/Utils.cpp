@@ -4,35 +4,37 @@
 #include <sstream>
 #include <vector>
 #include <cctype>
- 
+
+using namespace std;
+
 namespace {
- 
-std::string trim(const std::string &s) {
+
+string trim(const string &s) {
     const char *ws = " \t\r\n";
-    std::size_t start = s.find_first_not_of(ws);
-    if (start == std::string::npos) return "";
-    std::size_t end = s.find_last_not_of(ws);
+    size_t start = s.find_first_not_of(ws);
+    if (start == string::npos) return "";
+    size_t end = s.find_last_not_of(ws);
     return s.substr(start, end - start + 1);
 }
- 
-std::string toLower(std::string s) {
-    for (std::size_t i = 0; i < s.size(); i++)
-        s[i] = (char)std::tolower((unsigned char)s[i]);
+
+string toLower(string s) {
+    for (size_t i = 0; i < s.size(); i++)
+        s[i] = (char)tolower((unsigned char)s[i]);
     return s;
 }
- 
-void stripBOM(std::string &s) {
+
+void stripBOM(string &s) {
     if (s.size() >= 3 && (unsigned char)s[0] == 0xEF &&
         (unsigned char)s[1] == 0xBB && (unsigned char)s[2] == 0xBF)
         s.erase(0, 3);
 }
- 
-std::vector<std::string> parseCsvLine(const std::string &line) {
-    std::vector<std::string> fields;
-    std::string cur;
+
+vector<string> parseCsvLine(const string &line) {
+    vector<string> fields;
+    string cur;
     bool inQuotes = false;
- 
-    for (std::size_t i = 0; i < line.size(); i++) {
+
+    for (size_t i = 0; i < line.size(); i++) {
         char ch = line[i];
         if (inQuotes) {
             if (ch == '"') {
@@ -54,74 +56,71 @@ std::vector<std::string> parseCsvLine(const std::string &line) {
     fields.push_back(cur);
     return fields;
 }
- 
-std::string quoteField(const std::string &s) {
-    if (s.find_first_of(",\"\r\n") == std::string::npos) return s;
-    std::string out = "\"";
-    for (std::size_t i = 0; i < s.size(); i++) {
+
+string quoteField(const string &s) {
+    if (s.find_first_of(",\"\r\n") == string::npos) return s;
+    string out = "\"";
+    for (size_t i = 0; i < s.size(); i++) {
         if (s[i] == '"') out += "\"\"";
         else out += s[i];
     }
     out += "\"";
     return out;
 }
- 
-bool isHeaderLine(const std::string &line) {
-    std::vector<std::string> f = parseCsvLine(line);
+
+bool isHeaderLine(const string &line) {
+    vector<string> f = parseCsvLine(line);
     return !f.empty() && toLower(trim(f[0])) == "sbd";
 }
- 
+
 }
- 
-bool Utils::loadFromFile(const std::string &filename, LinkedList &list, HashTable &table) {
-    std::ifstream inFile(filename);
-    std::string line;
+
+bool Utils::loadFromFile(const string &filename, LinkedList &list, HashTable &table) {
+    ifstream inFile(filename);
+    string line;
     int loadedCount = 0;
     int validRows = 0;
     int duplicateCount = 0;
     int invalidCount = 0;
     bool firstLine = true;
- 
+
     if (!inFile.is_open()) {
-        std::cout << "[!] Khong the mo file du lieu: " << filename << "\n";
+        cout << "[!] Khong the mo file du lieu: " << filename << "\n";
         return false;
     }
- 
-    while (std::getline(inFile, line)) {
+
+    while (getline(inFile, line)) {
         if (firstLine) {
             stripBOM(line);
             firstLine = false;
             if (isHeaderLine(line)) continue;
         }
- 
+
         if (trim(line).empty()) continue;
- 
-        std::vector<std::string> f = parseCsvLine(line);
- 
+
+        vector<string> f = parseCsvLine(line);
+
         if (f.size() < 5) {
             invalidCount++;
             continue;
         }
- 
-        std::string sbd      = trim(f[0]);
-        std::string hoTen    = trim(f[1]);
-        std::string gioiTinh = trim(f[2]);
-        std::string ngaySinh = trim(f[3]);
-        std::string queQuan  = trim(f[4]);
- 
-        for (std::size_t i = 5; i < f.size(); i++)
+
+        string sbd      = trim(f[0]);
+        string hoTen    = trim(f[1]);
+        string gioiTinh = trim(f[2]);
+        string ngaySinh = trim(f[3]);
+        string queQuan  = trim(f[4]);
+
+        for (size_t i = 5; i < f.size(); i++)
             queQuan += ", " + trim(f[i]);
- 
+
         if (sbd.empty()) {
             invalidCount++;
             continue;
         }
- 
-        // Chi tinh la dong hop le khi khong bi trung SBD (truoc day dong bi trung
-        // van duoc tinh la hop le nen ham tra ve true du khong nap duoc thi sinh nao,
-        // khien CandidateManager::loadData thay danh sach hien tai bang danh sach rong).
+
         if (list.find(sbd) != nullptr) {
-            std::cout << "[!] Bo qua SBD trung: " << sbd << "\n";
+            cout << "[!] Bo qua SBD trung: " << sbd << "\n";
             duplicateCount++;
             continue;
         }
@@ -138,29 +137,29 @@ bool Utils::loadFromFile(const std::string &filename, LinkedList &list, HashTabl
     inFile.close();
 
     if (loadedCount == 0 || validRows == 0) {
-        std::cout << "[!] File " << filename << " khong co ban ghi hop le nao.\n";
+        cout << "[!] File " << filename << " khong co ban ghi hop le nao.\n";
         return false;
     }
- 
-    std::cout << "[+] Da doc thanh cong " << loadedCount << " thi sinh tu file " << filename << "\n";
+
+    cout << "[+] Da doc thanh cong " << loadedCount << " thi sinh tu file " << filename << "\n";
     if (duplicateCount > 0)
-        std::cout << "    (Bo qua " << duplicateCount << " dong trung SBD)\n";
+        cout << "    (Bo qua " << duplicateCount << " dong trung SBD)\n";
     if (invalidCount > 0)
-        std::cout << "    (Bo qua " << invalidCount << " dong sai dinh dang)\n";
+        cout << "    (Bo qua " << invalidCount << " dong sai dinh dang)\n";
     return true;
 }
- 
-bool Utils::saveToFile(const std::string &filename, const LinkedList &list) {
-    std::ofstream outFile(filename);
+
+bool Utils::saveToFile(const string &filename, const LinkedList &list) {
+    ofstream outFile(filename);
     Node* p = list.getHead();
- 
+
     if (!outFile.is_open()) {
-        std::cout << "[!] Khong the tao hoac mo file de ghi: " << filename << "\n";
+        cout << "[!] Khong the tao hoac mo file de ghi: " << filename << "\n";
         return false;
     }
- 
+
     outFile << "SBD,HoTen,GioiTinh,NgaySinh,QueQuan\n";
- 
+
     while (p != nullptr) {
         outFile << quoteField(p->data.getSBD()) << ","
                 << quoteField(p->data.getHoTen()) << ","
@@ -169,8 +168,8 @@ bool Utils::saveToFile(const std::string &filename, const LinkedList &list) {
                 << quoteField(p->data.getQueQuan()) << "\n";
         p = p->next;
     }
- 
+
     outFile.close();
-    std::cout << "[+] Da luu toan bo " << list.getCount() << " thi sinh ra file " << filename << " thanh cong!\n";
+    cout << "[+] Da luu toan bo " << list.getCount() << " thi sinh ra file " << filename << " thanh cong!\n";
     return true;
 }

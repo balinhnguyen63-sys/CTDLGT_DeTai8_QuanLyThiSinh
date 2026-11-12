@@ -3,41 +3,43 @@
 #include <string>
 #include <iomanip>
 
+using namespace std;
+
 // Nguyen Ba Linh: Mo hinh du lieu Thi sinh (Candidate)
 
 class Candidate {
 private:
-    std::string sbd;       // Mã dự thi / Số báo danh (duy nhất)
-    std::string hoTen;     // Họ và tên thí sinh
-    std::string gioiTinh;  // Giới tính (Nam / Nữ)
-    std::string ngaySinh;  // Ngày sinh (dd/mm/yyyy)
-    std::string queQuan;   // Quê quán / Nơi sinh
+    string sbd;       // Ma du thi / So bao danh (duy nhat)
+    string hoTen;     // Ho va ten thi sinh
+    string gioiTinh;  // Gioi tinh (Nam / Nu)
+    string ngaySinh;  // Ngay sinh (dd/mm/yyyy)
+    string queQuan;   // Que quan / Noi sinh
 
 public:
     // Constructors
     Candidate();
-    Candidate(const std::string &sbd, const std::string &hoTen,
-              const std::string &gioiTinh, const std::string &ngaySinh,
-              const std::string &queQuan);
+    Candidate(const string &sbd, const string &hoTen,
+              const string &gioiTinh, const string &ngaySinh,
+              const string &queQuan);
 
     // Getters
-    std::string getSBD() const;
-    std::string getHoTen() const;
-    std::string getGioiTinh() const;
-    std::string getNgaySinh() const;
-    std::string getQueQuan() const;
+    string getSBD() const;
+    string getHoTen() const;
+    string getGioiTinh() const;
+    string getNgaySinh() const;
+    string getQueQuan() const;
 
     // Setters
-    void setSBD(const std::string &sbd);
-    void setHoTen(const std::string &hoTen);
-    void setGioiTinh(const std::string &gioiTinh);
-    void setNgaySinh(const std::string &ngaySinh);
-    void setQueQuan(const std::string &queQuan);
+    void setSBD(const string &sbd);
+    void setHoTen(const string &hoTen);
+    void setGioiTinh(const string &gioiTinh);
+    void setNgaySinh(const string &ngaySinh);
+    void setQueQuan(const string &queQuan);
 
-    // Phương thức nghiệp vụ phục vụ Bảng băm & Sắp xếp
-    std::string getFirstName() const;         // Trích xuất Tên (từ cuối cùng trong họ tên, ví dụ: "Linh")
-    char getFirstLetterOfName() const;       // Lấy chữ cái đầu tiên của tên (A-Z) để băm bảng tra
+    // Phuong thuc phuc vu Bang bam & Sap xep
+    string getFirstName() const;         // Trich xuat Ten (tu cuoi cung trong ho ten)
+    char getFirstLetterOfName() const;   // Lay chu cai dau tien cua ten (A-Z) de bam bang tra
 
-    // Hiển thị thông tin thí sinh
-    void displayRow() const;                 // In dạng dòng trong bảng
+    // Hien thi thong tin thi sinh
+    void displayRow() const;             // In dang dong trong bang
 };

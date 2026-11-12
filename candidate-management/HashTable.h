@@ -2,46 +2,48 @@
 #include "LinkedList.h"
 #include <string>
 
+using namespace std;
+
 // Nguyen Ba Linh: Bang bam 26 nhom chu cai (A-Z) dung danh sach lien ket (chaining)
 
 class HashTable {
 public:
-    static const int TABLE_SIZE = 26; // 26 chữ cái tiếng Anh từ 'A' đến 'Z'
+    static const int TABLE_SIZE = 26; // 26 chu cai tieng Anh tu 'A' den 'Z'
 
 private:
-    LinkedList buckets[TABLE_SIZE];   // Mảng 26 danh sách liên kết (chaining / bảng tra)
+    LinkedList buckets[TABLE_SIZE];   // Mang 26 danh sach lien ket
 
 public:
     HashTable();
     ~HashTable();
 
-    // Hàm băm: chuyển chữ cái đầu tiên của Tên thành chỉ số bucket (0 -> 25)
+    // Ham bam: chuyen chu cai dau tien cua Ten thanh chi so bucket (0 -> 25)
     int hashFunction(char firstLetter) const;
 
-    // Chèn thí sinh vào đúng bucket tương ứng với chữ cái đầu của tên
+    // Chen thi sinh vao dung bucket tuong ung voi chu cai dau cua ten
     void insert(const Candidate &c);
 
-    // Tra cứu thí sinh theo Số Báo Danh (tìm trên các bucket)
-    Node* searchBySBD(const std::string &sbd) const;
+    // Tra cuu thi sinh theo So Bao Danh (tim tren cac bucket)
+    Node* searchBySBD(const string &sbd) const;
 
-    // Tra cứu thí sinh theo Tên (tận dụng bảng tra O(1) để đến ngay bucket)
-    void searchByName(const std::string &name) const;
+    // Tra cuu thi sinh theo Ten tren bang bam
+    void searchByName(const string &name) const;
 
-    // Xóa thí sinh khỏi bảng băm
-    bool remove(const std::string &sbd, char firstLetter);
+    // Xoa thi sinh khoi bang bam
+    bool remove(const string &sbd, char firstLetter);
 
-    // Hiển thị toàn bộ bảng băm theo từng nhóm chữ cái A-Z
+    // Hien thi toan bo bang bam theo tung nhom chu cai A-Z
     void displayAll() const;
 
-    // Hiển thị một bucket cụ thể
+    // Hien thi mot bucket cu the
     void displayBucket(int index) const;
 
-    // Lấy tham chiếu đến một bucket (phục vụ phân phòng thi)
+    // Lay tham chieu den mot bucket
     const LinkedList& getBucket(int index) const;
 
-    // Lấy tham chiếu có thể thay đổi đến một bucket (phục vụ sắp xếp bucket)
+    // Lay tham chieu co the thay doi den mot bucket
     LinkedList& getBucket(int index);
 
-    // Xóa toàn bộ dữ liệu bảng băm
+    // Xoa toan bo du lieu bang bam
     void clear();
 };

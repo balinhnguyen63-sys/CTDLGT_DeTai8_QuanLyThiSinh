@@ -3,6 +3,8 @@
 #include <vector>
 #include <cctype>
 
+using namespace std;
+
 void RoomAllocator::allocateRooms(const LinkedList &list,
                                   const HashTable &,
                                   int numRooms) {
@@ -11,27 +13,27 @@ void RoomAllocator::allocateRooms(const LinkedList &list,
     int totalCandidates = list.getCount();
 
     if (numRooms <= 0) {
-        std::cout << "[!] So phong thi phai lon hon 0!\n";
+        cout << "[!] So phong thi phai lon hon 0!\n";
         return;
     }
 
     if (list.isEmpty()) {
-        std::cout << "[!] Danh sach thi sinh rong!\n";
+        cout << "[!] Danh sach thi sinh rong!\n";
         return;
     }
 
     if (numRooms > totalCandidates) {
-        std::cout << "[!] So phong khong duoc lon hon so thi sinh!\n";
+        cout << "[!] So phong khong duoc lon hon so thi sinh!\n";
         return;
     }
 
     // Khoi tao cac phong thi va bang dem
-    std::vector<LinkedList> rooms(numRooms);
-    std::vector<int> roomSize(numRooms, 0);
+    vector<LinkedList> rooms(numRooms);
+    vector<int> roomSize(numRooms, 0);
 
     // Luu so luong thi sinh cung chu cai dau trong moi phong
-    std::vector<std::vector<int>> letterCount(
-        numRooms, std::vector<int>(26, 0)
+    vector<vector<int>> letterCount(
+        numRooms, vector<int>(26, 0)
     );
 
     int currentRoom = 0;
@@ -96,16 +98,16 @@ void RoomAllocator::allocateRooms(const LinkedList &list,
 
     // Hien thi ket qua phan phong
     for (int i = 0; i < numRooms; i++) {
-        std::cout << "\n========== PHONG THI "
-                  << i + 1 << " ==========\n";
+        cout << "\n========== PHONG THI "
+             << i + 1 << " ==========\n";
 
-        std::cout << "So thi sinh: " << roomSize[i] << "\n";
+        cout << "So thi sinh: " << roomSize[i] << "\n";
         rooms[i].display();
     }
 
-    std::cout << "\n=======================================\n";
-    std::cout << "Tong so thi sinh: " << totalCandidates << "\n";
-    std::cout << "Tong so phong thi: " << numRooms << "\n";
-    std::cout << "=======================================\n";
-    std::cout << "\n[+] Phan phong thi thanh cong!\n";
+    cout << "\n=======================================\n";
+    cout << "Tong so thi sinh: " << totalCandidates << "\n";
+    cout << "Tong so phong thi: " << numRooms << "\n";
+    cout << "=======================================\n";
+    cout << "\n[+] Phan phong thi thanh cong!\n";
 }

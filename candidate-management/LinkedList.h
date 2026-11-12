@@ -1,9 +1,11 @@
 #pragma once
 #include "Candidate.h"
 
+using namespace std;
+
 // Nguyen Ba Linh: Danh sach lien ket don (Node & LinkedList)
 
-// Nút trong danh sách liên kết đơn
+// Nut trong danh sach lien ket don
 struct Node {
     Candidate data;
     Node* next;
@@ -11,7 +13,7 @@ struct Node {
     Node(const Candidate &c);
 };
 
-// Lớp Danh sách liên kết đơn quản lý các thí sinh
+// Lop Danh sach lien ket don quan ly thi sinh
 class LinkedList {
 private:
     Node* head;
@@ -22,22 +24,22 @@ public:
     LinkedList();
     ~LinkedList();
 
-    // Copy Constructor & Assignment Operator để sao chép sâu an toàn
+    // Copy Constructor & Assignment Operator
     LinkedList(const LinkedList &other);
     LinkedList& operator=(const LinkedList &other);
 
-    // Con trỏ đầu và cuối
+    // Con tro dau va cuoi
     Node* getHead() const;
     Node* getTail() const;
     void setHead(Node* newHead);
     int getCount() const;
     bool isEmpty() const;
 
-    // Các thao tác danh sách liên kết
+    // Cac thao tac danh sach lien ket
     void insertTail(const Candidate &c);
     void insertHead(const Candidate &c);
-    bool remove(const std::string &sbd);
-    Node* find(const std::string &sbd) const;
+    bool remove(const string &sbd);
+    Node* find(const string &sbd) const;
     void clear();
     void display() const;
 };

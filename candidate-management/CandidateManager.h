@@ -3,6 +3,8 @@
 #include "HashTable.h"
 #include <string>
 
+using namespace std;
+
 // Nhom 4 - De tai 8: Quan ly danh sach thi sinh
 // Nguyen Ba Linh, Hoang The Anh, Tran Nhat Anh
 

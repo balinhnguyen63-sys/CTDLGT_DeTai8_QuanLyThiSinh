@@ -2,6 +2,8 @@
 #include "LinkedList.h"
 #include "HashTable.h"
 
+using namespace std;
+
 // Nguyen Huu Cuong: Sap xep thi sinh theo Ten tang dan A-Z (Merge Sort)
 
 class Sorter {
