@@ -19,8 +19,25 @@ string trim(const string &s) {
 }
 
 string normalizeGender(const string &raw) {
+    string s = raw;
+
+    // Quy doi cac bien the UTF-8 cua chu u co dau ve 'u' de "Nữ" cung nhan duoc.
+    const string uVariants[] = {
+        "\xC6\xAF", "\xC6\xB0",             // Ư, ư
+        "\xE1\xBB\xA8", "\xE1\xBB\xA9",     // Ứ, ứ
+        "\xE1\xBB\xAA", "\xE1\xBB\xAB",     // Ừ, ừ
+        "\xE1\xBB\xAC", "\xE1\xBB\xAD",     // Ử, ử
+        "\xE1\xBB\xAE", "\xE1\xBB\xAF"      // Ữ, ữ
+    };
+    for (const string &v : uVariants) {
+        size_t pos;
+        while ((pos = s.find(v)) != string::npos) {
+            s.replace(pos, v.size(), "u");
+        }
+    }
+
     string ascii;
-    for (unsigned char c : raw) {
+    for (unsigned char c : s) {
         if (c < 0x80) {
             ascii += (char)tolower(c);
         }
@@ -60,7 +77,233 @@ string dinhDangNgay(int ngay, int thang, int nam) {
     string sThang = (thang < 10 ? "0" : "") + to_string(thang);
     return sNgay + "/" + sThang + "/" + to_string(nam);
 }
-} 
+
+// Doc mot dong; tra ve false khi gap EOF de khong bi lap vo han.
+bool docDong(string &line) {
+    while (true) {
+        if (getline(cin, line)) return true;
+        if (cin.eof()) return false;
+        cin.clear();
+    }
+}
+
+// Trim va gop nhieu khoang trang thanh mot khoang trang.
+string chuanHoaKhoangTrang(const string &s) {
+    string out;
+    bool vuaGapKhoang = false;
+    for (char c : trim(s)) {
+        if (c == ' ' || c == '\t') {
+            if (!out.empty() && !vuaGapKhoang) {
+                out += ' ';
+                vuaGapKhoang = true;
+            }
+        }
+        else {
+            out += c;
+            vuaGapKhoang = false;
+        }
+    }
+    return out;
+}
+
+bool laChuCai(unsigned char c) {
+    return isalpha(c) != 0 || c >= 0x80; // byte >= 0x80 la chu cai tieng Viet UTF-8
+}
+
+bool chiChuaChuCaiVaKhoangTrang(const string &s) {
+    if (s.empty()) return false;
+    for (unsigned char c : s) {
+        if (!laChuCai(c) && c != ' ') return false;
+    }
+    return true;
+}
+
+bool chuoiThanhSo(const string &s, int &value) {
+    if (s.empty()) return false;
+    for (unsigned char c : s) {
+        if (!isdigit(c)) return false;
+    }
+    try {
+        value = stoi(s);
+    }
+    catch (...) {
+        return false;
+    }
+    return true;
+}
+
+string chuanHoaSBD(const string &s) {
+    string out = trim(s);
+    for (char &c : out) {
+        c = (char)toupper((unsigned char)c);
+    }
+    return out;
+}
+
+bool laSBDHopLe(const string &s) {
+    if (s.empty()) return false;
+    for (unsigned char c : s) {
+        if (!isalnum(c)) return false;
+    }
+    return true;
+}
+
+// Nhap Ho va ten dem. duocDeTrong = true dung cho chuc nang cap nhat.
+bool nhapHoDem(string &hoDem, bool duocDeTrong) {
+    while (true) {
+        cout << (duocDeTrong
+            ? "Nhap Ho va ten dem moi (de trong neu giu nguyen): "
+            : "Nhap Ho va ten dem: ");
+        string line;
+        if (!docDong(line)) return false;
+
+        line = chuanHoaKhoangTrang(line);
+        if (line.empty()) {
+            if (duocDeTrong) {
+                hoDem = "";
+                return true;
+            }
+            cout << "[!] Ho va ten dem khong duoc de trong! Nhap lai.\n";
+            continue;
+        }
+        if (!chiChuaChuCaiVaKhoangTrang(line)) {
+            cout << "[!] Ho va ten dem chi duoc chua chu cai va khoang trang! Nhap lai.\n";
+            continue;
+        }
+        hoDem = line;
+        return true;
+    }
+}
+
+// Nhap Ten rieng. Ten chi duoc la mot tu.
+bool nhapTen(string &ten, bool duocDeTrong) {
+    while (true) {
+        cout << (duocDeTrong
+            ? "Nhap Ten moi (de trong neu giu nguyen): "
+            : "Nhap Ten: ");
+        string line;
+        if (!docDong(line)) return false;
+
+        line = chuanHoaKhoangTrang(line);
+        if (line.empty()) {
+            if (duocDeTrong) {
+                ten = "";
+                return true;
+            }
+            cout << "[!] Ten khong duoc de trong! Nhap lai.\n";
+            continue;
+        }
+        if (line.find(' ') != string::npos) {
+            cout << "[!] Ten chi duoc la mot tu, khong chua khoang trang! Nhap lai.\n";
+            continue;
+        }
+        if (!chiChuaChuCaiVaKhoangTrang(line)) {
+            cout << "[!] Ten chi duoc chua chu cai! Nhap lai.\n";
+            continue;
+        }
+        ten = line;
+        return true;
+    }
+}
+
+// Nhap gioi tinh. duocDeTrong = true dung cho chuc nang cap nhat.
+bool nhapGioiTinh(string &gioiTinh, bool duocDeTrong) {
+    while (true) {
+        cout << (duocDeTrong
+            ? "Nhap Gioi Tinh moi (Nam/Nu, de trong neu giu nguyen): "
+            : "Nhap Gioi Tinh (Nam/Nu): ");
+        string line;
+        if (!docDong(line)) return false;
+
+        line = trim(line);
+        if (line.empty() && duocDeTrong) {
+            gioiTinh = "";
+            return true;
+        }
+
+        string chuan = normalizeGender(line);
+        if (!chuan.empty()) {
+            gioiTinh = chuan;
+            return true;
+        }
+        cout << "[!] Gioi tinh khong hop le (chi nhan Nam hoac Nu)! Nhap lai.\n";
+    }
+}
+
+// Nhap ngay/thang/nam rieng, sai thi nhap lai tu ngay.
+bool nhapNgaySinh(string &ngaySinh, bool duocDeTrong) {
+    while (true) {
+        cout << (duocDeTrong
+            ? "Nhap ngay sinh moi (1-31, de trong neu giu nguyen): "
+            : "Nhap ngay sinh (1-31): ");
+        string sNgay;
+        if (!docDong(sNgay)) return false;
+
+        sNgay = trim(sNgay);
+        if (sNgay.empty()) {
+            if (duocDeTrong) {
+                ngaySinh = "";
+                return true;
+            }
+            cout << "[!] Ngay sinh khong duoc de trong! Nhap lai.\n";
+            continue;
+        }
+
+        int ngay = 0, thang = 0, nam = 0;
+        if (!chuoiThanhSo(sNgay, ngay)) {
+            cout << "[!] Ngay sinh phai la so tu 1 den 31! Nhap lai.\n";
+            continue;
+        }
+
+        cout << "Nhap thang sinh (1-12): ";
+        string sThang;
+        if (!docDong(sThang)) return false;
+        if (!chuoiThanhSo(trim(sThang), thang)) {
+            cout << "[!] Thang sinh phai la so tu 1 den 12! Nhap lai tu ngay.\n";
+            continue;
+        }
+
+        cout << "Nhap nam sinh (vi du 2004): ";
+        string sNam;
+        if (!docDong(sNam)) return false;
+        if (!chuoiThanhSo(trim(sNam), nam)) {
+            cout << "[!] Nam sinh phai la so! Nhap lai tu ngay.\n";
+            continue;
+        }
+
+        if (!kiemTraNgayHopLe(ngay, thang, nam)) {
+            cout << "[!] Ngay thang nam sinh khong hop le! Nhap lai tu ngay.\n";
+            continue;
+        }
+
+        ngaySinh = dinhDangNgay(ngay, thang, nam);
+        return true;
+    }
+}
+
+// Nhap que quan. duocDeTrong = true dung cho chuc nang cap nhat.
+bool nhapQueQuan(string &queQuan, bool duocDeTrong) {
+    while (true) {
+        cout << (duocDeTrong
+            ? "Nhap Que Quan moi (de trong neu giu nguyen): "
+            : "Nhap Que Quan: ");
+        string line;
+        if (!docDong(line)) return false;
+
+        line = chuanHoaKhoangTrang(line);
+        if (line.empty()) {
+            if (duocDeTrong) {
+                queQuan = "";
+                return true;
+            }
+            cout << "[!] Que quan khong duoc de trong! Nhap lai.\n";
+            continue;
+        }
+        queQuan = line;
+        return true;
+    }
+}
+} // namespace
 
 // Nguyen Ba Linh: Khoi tao he thong quan ly thi sinh
 
@@ -101,77 +344,41 @@ bool CandidateManager::addCandidate() {
     string sbd, hoTen, gioiTinh, ngaySinh, queQuan;
 
     cout << "\n--- THEM THI SINH MOI ---\n";
-    cout << "Nhap Ma Du Thi / SBD (vi du: TS099): ";
-    cin >> sbd;
-    sbd = trim(sbd);
 
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    // Nhap SBD: sai dinh dang hoac trung thi bat nhap lai.
+    while (true) {
+        cout << "Nhap Ma Du Thi / SBD (vi du: TS099): ";
+        string line;
+        if (!docDong(line)) return false;
 
-    if (sbd.empty()) {
-        cout << "[!] Ma du thi khong duoc de trong!\n";
-        return false;
+        sbd = chuanHoaSBD(line);
+        if (sbd.empty()) {
+            cout << "[!] Ma du thi khong duoc de trong! Nhap lai.\n";
+            continue;
+        }
+        if (!laSBDHopLe(sbd)) {
+            cout << "[!] Ma du thi chi duoc chua chu cai va chu so! Nhap lai.\n";
+            continue;
+        }
+        if (candidateList.find(sbd) != nullptr ||
+            hashTable.searchBySBD(sbd) != nullptr) {
+            cout << "[!] Loi: Ma du thi " << sbd
+                 << " da ton tai trong he thong! Nhap SBD khac.\n";
+            continue;
+        }
+        break;
     }
 
-    // Kiem tra trung SBD ngay sau khi nhap
-    if (candidateList.find(sbd) != nullptr ||
-        hashTable.searchBySBD(sbd) != nullptr) {
-        cout << "[!] Loi: Ma du thi " << sbd
-             << " da ton tai trong he thong!\n";
-        return false;
-    }
+    string hoDem, ten;
+    if (!nhapHoDem(hoDem, false)) return false;
+    if (!nhapTen(ten, false)) return false;
+    hoTen = hoDem + " " + ten;
 
-    cout << "Nhap Ho va Ten: ";
-    getline(cin, hoTen);
-    hoTen = trim(hoTen);
-    if (hoTen.empty()) {
-        cout << "[!] Ho va Ten khong duoc de trong!\n";
-        return false;
-    }
+    if (!nhapGioiTinh(gioiTinh, false)) return false;
+    if (!nhapNgaySinh(ngaySinh, false)) return false;
+    if (!nhapQueQuan(queQuan, false)) return false;
 
-    cout << "Nhap Gioi Tinh (Nam/Nu): ";
-    getline(cin, gioiTinh);
-    string gioiTinhChuan = normalizeGender(gioiTinh);
-    if (gioiTinhChuan.empty()) {
-        cout << "[!] Gioi tinh khong hop le (chi nhan Nam hoac Nu)!\n";
-        return false;
-    }
-
-    int ngay = 0, thang = 0, nam = 0;
-    cout << "Nhap ngay sinh (1-31): ";
-    if (!(cin >> ngay)) {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "[!] Ngay sinh khong hop le!\n";
-        return false;
-    }
-    cout << "Nhap thang sinh (1-12): ";
-    if (!(cin >> thang)) {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "[!] Thang sinh khong hop le!\n";
-        return false;
-    }
-    cout << "Nhap nam sinh (vi du 2004): ";
-    if (!(cin >> nam)) {
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        cout << "[!] Nam sinh khong hop le!\n";
-        return false;
-    }
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-    if (!kiemTraNgayHopLe(ngay, thang, nam)) {
-        cout << "[!] Ngay thang nam sinh khong hop le!\n";
-        return false;
-    }
-
-    ngaySinh = dinhDangNgay(ngay, thang, nam);
-
-    cout << "Nhap Que Quan: ";
-    getline(cin, queQuan);
-    queQuan = trim(queQuan);
-
-    Candidate newCandidate(sbd, hoTen, gioiTinhChuan, ngaySinh, queQuan);
+    Candidate newCandidate(sbd, hoTen, gioiTinh, ngaySinh, queQuan);
 
     candidateList.insertTail(newCandidate);
     hashTable.insert(newCandidate);
@@ -184,13 +391,28 @@ bool CandidateManager::addCandidate() {
 
 bool CandidateManager::updateCandidate() {
     string sbd;
-    string newHoTen, newGioiTinh, newNgaySinh, newQueQuan;
+    string newHoTen, newHoDem, newTen;
+    string newGioiTinh, newNgaySinh, newQueQuan;
     Node* pTarget = nullptr;
 
     cout << "\n--- CAP NHAT THONG TIN THI SINH ---\n";
-    cout << "Nhap SBD thi sinh can cap nhat: ";
-    cin >> sbd;
-    sbd = trim(sbd);
+
+    while (true) {
+        cout << "Nhap SBD thi sinh can cap nhat: ";
+        string line;
+        if (!docDong(line)) return false;
+
+        sbd = chuanHoaSBD(line);
+        if (sbd.empty()) {
+            cout << "[!] SBD khong duoc de trong! Nhap lai.\n";
+            continue;
+        }
+        if (!laSBDHopLe(sbd)) {
+            cout << "[!] SBD chi duoc chua chu cai va chu so! Nhap lai.\n";
+            continue;
+        }
+        break;
+    }
 
     pTarget = candidateList.find(sbd);
 
@@ -203,71 +425,36 @@ bool CandidateManager::updateCandidate() {
     cout << "\nThong tin hien tai cua thi sinh:\n";
     pTarget->data.displayRow();
 
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-    cout << "\nNhap Ho Ten moi (de trong neu giu nguyen): ";
-    getline(cin, newHoTen);
-    newHoTen = trim(newHoTen);
-
-    cout << "Nhap Gioi Tinh moi (de trong neu giu nguyen): ";
-    getline(cin, newGioiTinh);
-    newGioiTinh = trim(newGioiTinh);
-
-    cout << "Nhap ngay sinh moi (1-31, de trong neu giu nguyen): ";
-    string sNgay;
-    getline(cin, sNgay);
-    sNgay = trim(sNgay);
-    if (!sNgay.empty()) {
-        int ngay = 0, thang = 0, nam = 0;
-        try {
-            ngay = stoi(sNgay);
-        } catch (...) {
-            cout << "[!] Ngay sinh khong hop le!\n";
-            return false;
-        }
-        cout << "Nhap thang sinh moi (1-12): ";
-        string sThang;
-        getline(cin, sThang);
-        try {
-            thang = stoi(sThang);
-        } catch (...) {
-            cout << "[!] Thang sinh khong hop le!\n";
-            return false;
-        }
-        cout << "Nhap nam sinh moi (vi du 2004): ";
-        string sNam;
-        getline(cin, sNam);
-        try {
-            nam = stoi(sNam);
-        } catch (...) {
-            cout << "[!] Nam sinh khong hop le!\n";
-            return false;
-        }
-
-        if (!kiemTraNgayHopLe(ngay, thang, nam)) {
-            cout << "[!] Ngay thang nam sinh khong hop le!\n";
-            return false;
-        }
-        newNgaySinh = dinhDangNgay(ngay, thang, nam);
+    // Tach ho ten cu de giu lai phan khong doi khi chi sua mot trong hai phan.
+    string oldHoTen = pTarget->data.getHoTen();
+    string oldHoDem, oldTen;
+    size_t lastSpace = oldHoTen.find_last_of(" \t");
+    if (lastSpace == string::npos) {
+        oldTen = oldHoTen;
+    }
+    else {
+        oldHoDem = trim(oldHoTen.substr(0, lastSpace));
+        oldTen = trim(oldHoTen.substr(lastSpace + 1));
     }
 
-    cout << "Nhap Que Quan moi (de trong neu giu nguyen): ";
-    getline(cin, newQueQuan);
-    newQueQuan = trim(newQueQuan);
+    if (!nhapHoDem(newHoDem, true)) return false;
+    if (!nhapTen(newTen, true)) return false;
 
-    string gioiTinhChuan;
-    if (!newGioiTinh.empty()) {
-        gioiTinhChuan = normalizeGender(newGioiTinh);
-        if (gioiTinhChuan.empty()) {
-            cout << "[!] Gioi tinh khong hop le (chi nhan Nam hoac Nu)!\n";
-            return false;
-        }
+    bool doiTen = !newHoDem.empty() || !newTen.empty();
+    if (doiTen) {
+        string hoDemCuoi = newHoDem.empty() ? oldHoDem : newHoDem;
+        string tenCuoi = newTen.empty() ? oldTen : newTen;
+        newHoTen = hoDemCuoi.empty() ? tenCuoi : (hoDemCuoi + " " + tenCuoi);
     }
+
+    if (!nhapGioiTinh(newGioiTinh, true)) return false;
+    if (!nhapNgaySinh(newNgaySinh, true)) return false;
+    if (!nhapQueQuan(newQueQuan, true)) return false;
 
     char oldFirstLetter = pTarget->data.getFirstLetterOfName();
 
-    if (!newHoTen.empty()) pTarget->data.setHoTen(newHoTen);
-    if (!gioiTinhChuan.empty()) pTarget->data.setGioiTinh(gioiTinhChuan);
+    if (doiTen) pTarget->data.setHoTen(newHoTen);
+    if (!newGioiTinh.empty()) pTarget->data.setGioiTinh(newGioiTinh);
     if (!newNgaySinh.empty()) pTarget->data.setNgaySinh(newNgaySinh);
     if (!newQueQuan.empty()) pTarget->data.setQueQuan(newQueQuan);
 
@@ -275,6 +462,7 @@ bool CandidateManager::updateCandidate() {
     hashTable.insert(pTarget->data);
 
     cout << "\n[+] Cap nhat thong tin thi sinh thanh cong!\n";
+    pTarget->data.displayRow();
 
     return true;
 }
